@@ -119,9 +119,9 @@ export default function App() {
 
       // Ctrl+C: copy
       if (e.key === 'c') {
-        e.preventDefault()
         const sel = selectedIdsRef.current
-        if (sel.length === 0) return
+        if (sel.length === 0) return // let browser handle if no nodes selected
+        e.preventDefault()
         const copied = nodesRef.current.filter(n => sel.includes(n.id)).map(n => JSON.parse(JSON.stringify(n)))
         setClipboard(copied)
         clipboardRef.current = copied
@@ -130,9 +130,9 @@ export default function App() {
 
       // Ctrl+X: cut
       if (e.key === 'x') {
-        e.preventDefault()
         const sel = selectedIdsRef.current
         if (sel.length === 0) return
+        e.preventDefault()
         undoStack.current.push({ nodes: [...nodesRef.current], edges: [...edgesRef.current] })
         if (undoStack.current.length > 20) undoStack.current.shift()
         const copied = nodesRef.current.filter(n => sel.includes(n.id)).map(n => JSON.parse(JSON.stringify(n)))
@@ -146,9 +146,9 @@ export default function App() {
 
       // Ctrl+V: paste
       if (e.key === 'v') {
-        e.preventDefault()
         const clip = clipboardRef.current
         if (clip.length === 0) return
+        e.preventDefault()
         undoStack.current.push({ nodes: [...nodesRef.current], edges: [...edgesRef.current] })
         if (undoStack.current.length > 20) undoStack.current.shift()
 
@@ -316,6 +316,15 @@ export default function App() {
     setSelectedNodeIds((selectedNodes || []).map(n => n.id))
   }, [])
 
+  const onNodeClick = useCallback((_, node) => {
+    setSelectedNodeIds(ids => {
+      // If shift is not held, just select this node
+      // onSelectionChange handles multi-select
+      if (!ids.includes(node.id)) return [node.id]
+      return ids
+    })
+  }, [])
+
   const handleAlign = useCallback((type) => {
     if (selectedNodeIds.length < 2) return
     setNodes(nds => {
@@ -466,6 +475,7 @@ export default function App() {
         onConnect={onConnect}
         onInit={(instance) => { rfInstanceRef.current = instance }}
         onNodeDragStop={onNodeDragStop}
+        onNodeClick={onNodeClick}
         onNodeDoubleClick={handleNodeDoubleClick}
         onEdgeClick={handleEdgeClick}
         onPaneClick={(e) => {
