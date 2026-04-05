@@ -78,6 +78,7 @@ export default function App() {
   const [clipboard, setClipboard] = useState([])
   const clipboardRef = useRef([])
   const selectedRef = useRef([])
+  const lastClickPosRef = useRef(null)
   // Keep refs in sync for use in event handler
   useEffect(() => { clipboardRef.current = clipboard }, [clipboard])
   useEffect(() => { selectedRef.current = selectedNodeIds }, [selectedNodeIds])
@@ -109,23 +110,45 @@ export default function App() {
   const handlePasteNodes = useCallback(() => {
     const clip = clipboardRef.current
     if (clip.length === 0) return
+
+    // Calculate paste target position
+    let targetX, targetY
+    if (lastClickPosRef.current) {
+      targetX = lastClickPosRef.current.x
+      targetY = lastClickPosRef.current.y
+      lastClickPosRef.current = null
+    } else if (rfInstanceRef.current) {
+      const vp = rfInstanceRef.current.getViewport()
+      targetX = (-vp.x + window.innerWidth / 2) / vp.zoom
+      targetY = (-vp.y + window.innerHeight / 2) / vp.zoom
+    } else {
+      targetX = clip[0].position.x + 40
+      targetY = clip[0].position.y + 40
+    }
+
+    // Calculate clip bounding box center
+    const minX = Math.min(...clip.map(n => n.position.x))
+    const minY = Math.min(...clip.map(n => n.position.y))
+    const maxX = Math.max(...clip.map(n => n.position.x + (n.style?.width || 240)))
+    const maxY = Math.max(...clip.map(n => n.position.y + 150))
+    const centerX = (minX + maxX) / 2
+    const centerY = (minY + maxY) / 2
+    const offsetX = targetX - centerX
+    const offsetY = targetY - centerY
+
     const newIds = []
-    const idMap = {}
     const newNodes = clip.map(n => {
       const newId = nanoid(8)
-      idMap[n.id] = newId
       newIds.push(newId)
       return {
         ...n,
         id: newId,
-        position: { x: n.position.x + 40, y: n.position.y + 40 },
+        position: { x: n.position.x + offsetX, y: n.position.y + offsetY },
         selected: true,
       }
     })
     setNodes(nds => [...nds.map(n => ({ ...n, selected: false })), ...newNodes])
     setSelectedNodeIds(newIds)
-    // Update clipboard positions for next paste
-    setClipboard(clip.map(n => ({ ...n, position: { x: n.position.x + 40, y: n.position.y + 40 } })))
   }, [])
 
   // Global keyboard shortcuts
@@ -399,7 +422,13 @@ export default function App() {
         onInit={(instance) => { rfInstanceRef.current = instance }}
         onNodeDoubleClick={handleNodeDoubleClick}
         onEdgeClick={handleEdgeClick}
-        onPaneClick={() => { setSelectedEdge(null); setSelectedNodeIds([]) }}
+        onPaneClick={(e) => {
+          setSelectedEdge(null)
+          setSelectedNodeIds([])
+          if (rfInstanceRef.current) {
+            lastClickPosRef.current = rfInstanceRef.current.screenToFlowPosition({ x: e.clientX, y: e.clientY })
+          }
+        }}
         onSelectionChange={onSelectionChange}
         selectionKeyCode="Shift"
         multiSelectionKeyCode="Shift"
