@@ -248,10 +248,23 @@ export default function App() {
 
   const handleAddNode = useCallback(() => {
     const id = nanoid(8)
+    let position
+    if (lastClickPosRef.current) {
+      position = { x: lastClickPosRef.current.x, y: lastClickPosRef.current.y }
+      lastClickPosRef.current = null
+    } else if (rfInstanceRef.current) {
+      const vp = rfInstanceRef.current.getViewport()
+      position = {
+        x: (-vp.x + window.innerWidth / 2) / vp.zoom,
+        y: (-vp.y + window.innerHeight / 2) / vp.zoom,
+      }
+    } else {
+      position = { x: 250 + Math.random() * 200, y: 200 + Math.random() * 200 }
+    }
     const newNode = {
       id,
       type: 'custom',
-      position: { x: 250 + Math.random() * 200, y: 200 + Math.random() * 200 },
+      position,
       data: { title: '', blocks: undefined },
     }
     setNodes(nds => [...nds, newNode])
