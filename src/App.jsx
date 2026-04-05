@@ -324,9 +324,9 @@ export default function App() {
         connectionMode={ConnectionMode.Loose}
         proOptions={{ hideAttribution: true }}
         deleteKeyCode="Delete"
-        style={{ background: '#ffffff' }}
+        style={{ background: '#f8fafc' }}
       >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#e5e7eb" />
+        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#cbd5e1" />
         <ZoomControls onAutoLayout={handleAutoLayout} />
       </ReactFlow>
 
