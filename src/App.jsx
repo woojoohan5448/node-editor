@@ -603,10 +603,10 @@ export default function App() {
         .node-link:hover { text-decoration: underline !important; }
         .node-action-btn:hover { background: #f3f4f6; color: #1a1a1a; }
         .node-action-btn-delete:hover { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
-        .react-flow__handle { opacity: 0; transition: opacity 0.2s; cursor: crosshair; }
+        .react-flow__handle { opacity: 0; transition: opacity 0.2s; cursor: crosshair; z-index: 10; }
         .react-flow__node:hover .react-flow__handle,
         .react-flow__node.selected .react-flow__handle { opacity: 1; }
-        .react-flow__handle:hover { transform: scale(1.3); }
+        .react-flow__handle:hover { transform: scale(1.3); z-index: 20; }
         .react-flow__edge:hover { cursor: pointer; }
         .react-flow__edge path[stroke-dasharray] {
           animation: dashFlow 0.5s linear infinite;

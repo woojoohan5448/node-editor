@@ -290,6 +290,7 @@ const handleStyle = {
   background: '#3b82f6',
   border: '2px solid #fff',
   cursor: 'crosshair',
+  zIndex: 10,
 }
 
 const BG_COLORS = [
