@@ -8,7 +8,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-4',
     type: 'custom',
-    position: { x: 2000, y: 0 },
+    position: { x: 12475, y: 0 },
     data: {
       title: '바이브 코딩이란?',
       bgColor: '#eff6ff',
@@ -21,7 +21,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-16',
     type: 'custom',
-    position: { x: 2500, y: -10250 },
+    position: { x: 1705, y: 700 },
     data: {
       title: '왜 ‘Vibe(느낌)’라는 이름인가?',
       bgColor: '#f0fdf4',
@@ -38,7 +38,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-17',
     type: 'custom',
-    position: { x: 3000, y: -10250 },
+    position: { x: 13015, y: 0 },
     data: {
       title: 'Andrej Karpathy',
       bgColor: '#fff7ed',
@@ -51,7 +51,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-18',
     type: 'custom',
-    position: { x: 2500, y: 6000 },
+    position: { x: 13825, y: 350 },
     data: {
       title: '바이브 코딩의 핵심 개념',
       bgColor: '#fdf2f8',
@@ -76,7 +76,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-19',
     type: 'custom',
-    position: { x: 3000, y: 6000 },
+    position: { x: 13825, y: 700 },
     data: {
       title: '바이브 코딩의 장점',
       bgColor: '#f5f3ff',
@@ -111,7 +111,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-20',
     type: 'custom',
-    position: { x: 2500, y: 10250 },
+    position: { x: 21655, y: 350 },
     data: {
       title: '바이브 코딩으로 할 수 있는 것',
       bgColor: '#fefce8',
@@ -145,7 +145,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-21',
     type: 'custom',
-    position: { x: 3000, y: 10250 },
+    position: { x: 21655, y: 700 },
     data: {
       title: '바이브 코딩으로 할 수 없는 것',
       bgColor: '#f0f9ff',
@@ -179,7 +179,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-22',
     type: 'custom',
-    position: { x: 3500, y: 10250 },
+    position: { x: 21655, y: 1050 },
     data: {
       title: '할 수 있는 것 & 할 수 없는 것',
       bgColor: '#f0fdfa',
@@ -196,7 +196,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-23',
     type: 'custom',
-    position: { x: 2500, y: 7825 },
+    position: { x: 18415, y: 350 },
     data: {
       title: '바이브 코딩 툴 정리',
       bgColor: '#f8fafc',
@@ -206,7 +206,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-24',
     type: 'custom',
-    position: { x: 3000, y: 9250 },
+    position: { x: 20575, y: 700 },
     data: {
       title: 'AI 코딩 에디터 / IDE (Integrated Developer Envirement)',
       bgColor: '#eff6ff',
@@ -216,7 +216,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-25',
     type: 'custom',
-    position: { x: 3000, y: 7400 },
+    position: { x: 17075, y: 700 },
     data: {
       title: '풀스택/프로토타입 생성 도구',
       bgColor: '#f0fdf4',
@@ -226,7 +226,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-26',
     type: 'custom',
-    position: { x: 3500, y: 9650 },
+    position: { x: 21115, y: 1050 },
     data: {
       title: 'IDE',
       bgColor: '#fff7ed',
@@ -236,7 +236,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-28',
     type: 'custom',
-    position: { x: 3500, y: 8850 },
+    position: { x: 20035, y: 1050 },
     data: {
       title: 'CLI',
       bgColor: '#fdf2f8',
@@ -246,7 +246,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-29',
     type: 'custom',
-    position: { x: 4000, y: 9850 },
+    position: { x: 21385, y: 1400 },
     data: {
       title: 'Cursor',
       bgColor: '#f5f3ff',
@@ -265,7 +265,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-30',
     type: 'custom',
-    position: { x: 4000, y: 9450 },
+    position: { x: 20845, y: 1400 },
     data: {
       title: 'Google Antigravity',
       bgColor: '#fefce8',
@@ -284,7 +284,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-31',
     type: 'custom',
-    position: { x: 4000, y: 8650 },
+    position: { x: 19765, y: 1400 },
     data: {
       title: 'Claude Code',
       bgColor: '#f0f9ff',
@@ -305,7 +305,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-32',
     type: 'custom',
-    position: { x: 4000, y: 9050 },
+    position: { x: 20305, y: 1400 },
     data: {
       title: 'OpenAI Codex',
       bgColor: '#f0fdfa',
@@ -326,7 +326,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-34',
     type: 'custom',
-    position: { x: 3500, y: 6800 },
+    position: { x: 15725, y: 1050 },
     data: {
       title: 'Lovable',
       bgColor: '#f8fafc',
@@ -347,7 +347,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-35',
     type: 'custom',
-    position: { x: 3500, y: 7200 },
+    position: { x: 16265, y: 1050 },
     data: {
       title: 'v0 (by Vercel)',
       bgColor: '#eff6ff',
@@ -366,7 +366,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-36',
     type: 'custom',
-    position: { x: 3500, y: 7600 },
+    position: { x: 16805, y: 1050 },
     data: {
       title: 'Replit',
       bgColor: '#f0fdf4',
@@ -389,7 +389,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-37',
     type: 'custom',
-    position: { x: 3500, y: 8000 },
+    position: { x: 17345, y: 1050 },
     data: {
       title: 'Bolt',
       bgColor: '#fff7ed',
@@ -408,7 +408,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-38',
     type: 'custom',
-    position: { x: 2500, y: -4287 },
+    position: { x: 8965, y: 350 },
     data: {
       title: '알아두면 좋은 개발 용어 정리',
       bgColor: '#fdf2f8',
@@ -418,7 +418,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-42',
     type: 'custom',
-    position: { x: 3000, y: -725 },
+    position: { x: 11935, y: 700 },
     data: {
       title: 'WEB',
       bgColor: '#f5f3ff',
@@ -428,7 +428,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-43',
     type: 'custom',
-    position: { x: 3500, y: 2400 },
+    position: { x: 14645, y: 1050 },
     data: {
       title: '프론트엔드 (Frontend)',
       bgColor: '#fefce8',
@@ -463,7 +463,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-44',
     type: 'custom',
-    position: { x: 3500, y: -3250 },
+    position: { x: 10855, y: 1050 },
     data: {
       title: '벡엔드(Backend)',
       bgColor: '#f0f9ff',
@@ -501,7 +501,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-45',
     type: 'custom',
-    position: { x: 3500, y: -1400 },
+    position: { x: 12475, y: 1050 },
     data: {
       title: 'DB (DataBase)',
       bgColor: '#f0fdfa',
@@ -538,7 +538,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-46',
     type: 'custom',
-    position: { x: 4000, y: -400 },
+    position: { x: 14095, y: 1400 },
     data: {
       title: 'HTML (HyperText Markup Language)',
       bgColor: '#f8fafc',
@@ -575,7 +575,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-47',
     type: 'custom',
-    position: { x: 4000, y: 5200 },
+    position: { x: 18415, y: 1400 },
     data: {
       title: 'CSS (Cascading Style Sheets)',
       bgColor: '#eff6ff',
@@ -596,7 +596,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-48',
     type: 'custom',
-    position: { x: 4000, y: 4400 },
+    position: { x: 15175, y: 1400 },
     data: {
       title: 'JavaScript (JS)',
       bgColor: '#f0fdf4',
@@ -615,7 +615,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-49',
     type: 'custom',
-    position: { x: 4000, y: -3250 },
+    position: { x: 10855, y: 1400 },
     data: {
       title: 'API',
       bgColor: '#fff7ed',
@@ -655,7 +655,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-50',
     type: 'custom',
-    position: { x: 4500, y: -3050 },
+    position: { x: 12205, y: 1750 },
     data: {
       title: 'JSON (JavaScript Object Notation)',
       bgColor: '#fdf2f8',
@@ -673,7 +673,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-51',
     type: 'custom',
-    position: { x: 4500, y: 5200 },
+    position: { x: 18415, y: 1750 },
     data: {
       title: '반응형(Responsive)',
       bgColor: '#f5f3ff',
@@ -693,7 +693,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-52',
     type: 'custom',
-    position: { x: 3500, y: -2250 },
+    position: { x: 11935, y: 1050 },
     data: {
       title: '프론트엔드 & 백엔드 & 데이터베이스',
       bgColor: '#fefce8',
@@ -705,7 +705,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-53',
     type: 'custom',
-    position: { x: 3000, y: -7850 },
+    position: { x: 4645, y: 700 },
     data: {
       title: '기타',
       bgColor: '#f0f9ff',
@@ -715,7 +715,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-54',
     type: 'custom',
-    position: { x: 3500, y: -7050 },
+    position: { x: 5995, y: 1050 },
     data: {
       title: '라이브러리',
       bgColor: '#f0fdfa',
@@ -735,7 +735,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-55',
     type: 'custom',
-    position: { x: 3500, y: -8650 },
+    position: { x: 3875, y: 1050 },
     data: {
       title: '환경 변수(.env)',
       bgColor: '#f8fafc',
@@ -755,7 +755,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-57',
     type: 'custom',
-    position: { x: 3000, y: 8400 },
+    position: { x: 19495, y: 700 },
     data: {
       title: '기타',
       bgColor: '#eff6ff',
@@ -765,7 +765,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-58',
     type: 'custom',
-    position: { x: 3500, y: 8400 },
+    position: { x: 19495, y: 1050 },
     data: {
       title: 'Supabase',
       bgColor: '#f0fdf4',
@@ -775,7 +775,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-59',
     type: 'custom',
-    position: { x: 3500, y: -9850 },
+    position: { x: 2295, y: 984 },
     data: {
       title: '터미널',
       bgColor: '#fff7ed',
@@ -796,7 +796,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-60',
     type: 'custom',
-    position: { x: 3500, y: -9450 },
+    position: { x: 2835, y: 984 },
     data: {
       title: '배포',
       bgColor: '#fdf2f8',
@@ -816,7 +816,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-61',
     type: 'custom',
-    position: { x: 3000, y: -4850 },
+    position: { x: 8425, y: 700 },
     data: {
       title: 'AI',
       bgColor: '#f5f3ff',
@@ -826,7 +826,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-62',
     type: 'custom',
-    position: { x: 3500, y: -5450 },
+    position: { x: 8155, y: 1050 },
     data: {
       title: '프롬프트(Prompt)',
       bgColor: '#fefce8',
@@ -851,7 +851,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-63',
     type: 'custom',
-    position: { x: 3500, y: -4650 },
+    position: { x: 9235, y: 1050 },
     data: {
       title: '컨텍스트(Context)',
       bgColor: '#f0f9ff',
@@ -871,7 +871,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-64',
     type: 'custom',
-    position: { x: 4500, y: -3450 },
+    position: { x: 10855, y: 1750 },
     data: {
       title: 'API Key',
       bgColor: '#f0fdfa',
@@ -891,7 +891,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-65',
     type: 'custom',
-    position: { x: 3500, y: -5050 },
+    position: { x: 8695, y: 1050 },
     data: {
       title: '토큰(Token)',
       bgColor: '#f8fafc',
@@ -916,7 +916,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-66',
     type: 'custom',
-    position: { x: 3500, y: -4250 },
+    position: { x: 9775, y: 1050 },
     data: {
       title: '템퍼러처 (Temperature / 창의성 조절)',
       bgColor: '#eff6ff',
@@ -948,7 +948,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-67',
     type: 'custom',
-    position: { x: 3500, y: -7450 },
+    position: { x: 5455, y: 1050 },
     data: {
       title: '디버깅(Debugging)',
       bgColor: '#f0fdf4',
@@ -968,7 +968,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-68',
     type: 'custom',
-    position: { x: 4000, y: -800 },
+    position: { x: 13555, y: 1400 },
     data: {
       title: '테이블(Table)',
       bgColor: '#fff7ed',
@@ -988,7 +988,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-71',
     type: 'custom',
-    position: { x: 4000, y: -1200 },
+    position: { x: 13015, y: 1400 },
     data: {
       title: 'CRUD',
       bgColor: '#fdf2f8',

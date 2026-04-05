@@ -12,7 +12,8 @@ const educationNodes = [
   {
     id: 'overview',
     type: 'custom',
-    position: { x: 400, y: 0 },
+    position: { x: 10, y: 156 },
+    style: { width: 600 },
     data: {
       title: '전체 요약',
       bgColor: '#eff6ff',
@@ -28,7 +29,7 @@ const educationNodes = [
   {
     id: 'step1',
     type: 'custom',
-    position: { x: 0, y: 250 },
+    position: { x: 0, y: 350 },
     data: {
       title: '1단계: LLM 작동 원리',
       bgColor: '#fefce8',
@@ -49,7 +50,7 @@ const educationNodes = [
   {
     id: 'step2',
     type: 'custom',
-    position: { x: 500, y: 250 },
+    position: { x: 528, y: 356 },
     data: {
       title: '2단계: 상용 도구 기능',
       bgColor: '#fff7ed',
@@ -78,7 +79,7 @@ const educationNodes = [
   {
     id: 'step3',
     type: 'custom',
-    position: { x: 250, y: 550 },
+    position: { x: 360, y: 700 },
     data: {
       title: '3단계: 진화 흐름',
       bgColor: '#f5f3ff',
@@ -96,7 +97,7 @@ const educationNodes = [
   {
     id: 'prompt-eng',
     type: 'custom',
-    position: { x: -100, y: 850 },
+    position: { x: 25, y: 1050 },
     data: {
       title: '프롬프트 엔지니어링',
       bgColor: '#f0fdf4',
@@ -126,7 +127,7 @@ const educationNodes = [
   {
     id: 'context-eng',
     type: 'custom',
-    position: { x: 350, y: 850 },
+    position: { x: 745, y: 1050 },
     data: {
       title: '컨텍스트 엔지니어링',
       bgColor: '#f0f9ff',
@@ -147,7 +148,7 @@ const educationNodes = [
   {
     id: 'harness-eng',
     type: 'custom',
-    position: { x: 700, y: 850 },
+    position: { x: 1365, y: 1050 },
     data: {
       title: '하네스 엔지니어링',
       bgColor: '#fdf2f8',
@@ -167,7 +168,7 @@ const educationNodes = [
   {
     id: 'terminology',
     type: 'custom',
-    position: { x: -100, y: 1200 },
+    position: { x: 25, y: 1400 },
     data: {
       title: '용어 정리: 레이어 구분',
       bgColor: '#f8fafc',

@@ -28,7 +28,7 @@ import {
   deleteProject,
   getProject,
 } from './utils/storage'
-import { initialNodes, initialEdges } from './data/educationData'
+import { initialNodes, initialEdges } from './data/snapshotData'
 
 const defaultEdgeOptions = {
   animated: true,
