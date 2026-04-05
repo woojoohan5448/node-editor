@@ -84,14 +84,15 @@ export default function App() {
         setShowSearch(s => !s)
         return
       }
-      // Skip if typing in input/textarea or modal open
+      // Skip if modifier keys held or typing in input/textarea
+      if (e.ctrlKey || e.metaKey || e.altKey) return
       const tag = e.target.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return
-      if (e.key === 'h' || e.key === 'H') setMode('hand')
-      if (e.key === 'v' || e.key === 'V') setMode('cursor')
+      if (e.key === 'h') setMode('hand')
+      if (e.key === 'v') setMode('cursor')
     }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
+    window.addEventListener('keydown', handleKey, true)
+    return () => window.removeEventListener('keydown', handleKey, true)
   }, [])
 
   // Load project data when activeId changes
