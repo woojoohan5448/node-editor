@@ -15,7 +15,9 @@
       "Bash(node -e \"import\\(''./src/data/vibeCodingData.js''\\).then\\(m => { const root = m.vibeCodingNodes.find\\(n => n.id === ''node-4''\\); console.log\\(''Root pos:'', root.position\\); console.log\\(''Total nodes:'', m.vibeCodingNodes.length\\); console.log\\(''Total edges:'', m.vibeCodingEdges.length\\); const withBlocks = m.vibeCodingNodes.filter\\(n => n.data.blocks !== undefined\\); console.log\\(''Nodes with blocks:'', withBlocks.length\\); const withImages = m.vibeCodingNodes.filter\\(n => n.data.blocks && n.data.blocks.some && n.data.blocks.some\\(b => b.type === ''image''\\)\\); console.log\\(''Nodes with images:'', withImages.length\\); }\\)\")",
       "Bash(node -e \"import\\(''./src/data/vibeCodingData.js''\\).then\\(m => { const root = m.vibeCodingNodes.find\\(n => n.id === ''node-4''\\); console.log\\(''Root pos:'', root.position\\); console.log\\(''Total nodes:'', m.vibeCodingNodes.length\\); console.log\\(''Total edges:'', m.vibeCodingEdges.length\\); }\\)\")",
       "Bash(node -e \"import\\(''./src/data/vibeCodingData.js''\\).then\\(m => { const n16 = m.vibeCodingNodes.find\\(n => n.id === ''node-16''\\); console.log\\(''node-16 title:'', n16.data.title\\); console.log\\(''node-16 blocks count:'', n16.data.blocks.length\\); console.log\\(''node-16 first block type:'', n16.data.blocks[0].type\\); }\\)\")",
-      "Bash(node -e \":*)"
+      "Bash(node -e \":*)",
+      "Bash(rm -rf node_modules/.vite)",
+      "Bash(pkill -f \"vite\")"
     ]
   }
 }

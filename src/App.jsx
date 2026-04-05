@@ -79,8 +79,6 @@ export default function App() {
   const clipboardRef = useRef([])
   const selectedRef = useRef([])
   const lastClickPosRef = useRef(null)
-  const historyRef = useRef([])
-  const isUndoingRef = useRef(false)
   // Keep refs in sync for use in event handler
   useEffect(() => { clipboardRef.current = clipboard }, [clipboard])
   useEffect(() => { selectedRef.current = selectedNodeIds }, [selectedNodeIds])
@@ -166,7 +164,6 @@ export default function App() {
       const tag = e.target.tagName
       const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable
       if (mod && !isTyping) {
-        if (e.key === 'z') { e.preventDefault(); handleUndo(); return }
         if (e.key === 'c') { e.preventDefault(); handleCopyNodes(); return }
         if (e.key === 'x') { e.preventDefault(); handleCutNodes(); return }
         if (e.key === 'v') { e.preventDefault(); handlePasteNodes(); return }
@@ -179,7 +176,7 @@ export default function App() {
     }
     window.addEventListener('keydown', handleKey, true)
     return () => window.removeEventListener('keydown', handleKey, true)
-  }, [handleUndo, handleCopyNodes, handleCutNodes, handlePasteNodes])
+  }, [handleCopyNodes, handleCutNodes, handlePasteNodes])
 
   // Load project data when activeId changes
   useEffect(() => {
@@ -198,33 +195,6 @@ export default function App() {
       }))
     }
   }, [activeId])
-
-  // Undo history tracking
-  useEffect(() => {
-    if (isUndoingRef.current) {
-      isUndoingRef.current = false
-      return
-    }
-    const timeout = setTimeout(() => {
-      const snap = JSON.stringify({ nodes, edges })
-      const h = historyRef.current
-      if (h.length === 0 || h[h.length - 1] !== snap) {
-        h.push(snap)
-        if (h.length > 50) h.shift()
-      }
-    }, 400)
-    return () => clearTimeout(timeout)
-  }, [nodes, edges])
-
-  const handleUndo = useCallback(() => {
-    const h = historyRef.current
-    if (h.length < 2) return
-    h.pop() // remove current
-    const prev = JSON.parse(h[h.length - 1])
-    isUndoingRef.current = true
-    setNodes(prev.nodes)
-    setEdges(prev.edges)
-  }, [])
 
   // Auto-save to localStorage
   useEffect(() => {
