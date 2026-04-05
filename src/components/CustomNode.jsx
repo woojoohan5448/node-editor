@@ -350,7 +350,7 @@ function CustomNode({ data, selected }) {
         overflowWrap: 'break-word',
         boxShadow: selected
           ? '0 0 0 2px #3b82f6, 0 4px 12px rgba(0,0,0,0.1)'
-          : '0 2px 8px rgba(0,0,0,0.08)',
+          : '0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)',
         border: selected ? '1px solid #3b82f6' : '1px solid #e2e8f0',
         position: 'relative',
         transition: 'box-shadow 0.15s, border-color 0.15s',

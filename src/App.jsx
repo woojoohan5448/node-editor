@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from 'react'
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import {
   ReactFlow,
   addEdge,
@@ -18,6 +18,7 @@ import Toolbar from './components/Toolbar'
 import ZoomControls from './components/ZoomControls'
 import ProjectSelector from './components/ProjectSelector'
 import SettingsModal from './components/SettingsModal'
+import SearchPanel from './components/SearchPanel'
 import EdgeToolbar from './components/EdgeToolbar'
 import {
   getProjects,
@@ -67,11 +68,25 @@ export default function App() {
   const [nodes, setNodes] = useState(activeProject?.nodes || [])
   const [edges, setEdges] = useState(activeProject?.edges || [])
   const [mode, setMode] = useState('cursor')
+  const rfInstanceRef = useRef(null)
   const [editNode, setEditNode] = useState(null)
   const [showPublish, setShowPublish] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [showSearch, setShowSearch] = useState(false)
   const [selectedEdge, setSelectedEdge] = useState(null) // { id, position: {x, y} }
   const [selectedNodeIds, setSelectedNodeIds] = useState([])
+
+  // Ctrl+K search shortcut
+  useEffect(() => {
+    const handleKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault()
+        setShowSearch(s => !s)
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [])
 
   // Load project data when activeId changes
   useEffect(() => {
@@ -277,6 +292,11 @@ export default function App() {
       {/* Header */}
       <div style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button style={settingsBtn} onClick={() => setShowSearch(s => !s)} title="검색 (Ctrl+K)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
         <button style={settingsBtn} onClick={() => setShowSettings(true)} title="설정">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="3" />
@@ -309,6 +329,7 @@ export default function App() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onInit={(instance) => { rfInstanceRef.current = instance }}
         onNodeDoubleClick={handleNodeDoubleClick}
         onEdgeClick={handleEdgeClick}
         onPaneClick={() => { setSelectedEdge(null); setSelectedNodeIds([]) }}
@@ -324,9 +345,9 @@ export default function App() {
         connectionMode={ConnectionMode.Loose}
         proOptions={{ hideAttribution: true }}
         deleteKeyCode="Delete"
-        style={{ background: '#f8fafc' }}
+        style={{ background: '#f1f5f9' }}
       >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#cbd5e1" />
+        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="#cbd5e1" />
         <ZoomControls onAutoLayout={handleAutoLayout} />
       </ReactFlow>
 
@@ -365,6 +386,24 @@ export default function App() {
           onChange={handleEdgeStyleChange}
           onDelete={handleEdgeDelete}
           onClose={() => setSelectedEdge(null)}
+        />
+      )}
+
+      {/* Search Panel */}
+      {showSearch && (
+        <SearchPanel
+          nodes={nodes}
+          onFocusNode={(nodeId) => {
+            const node = nodes.find(n => n.id === nodeId)
+            if (node && rfInstanceRef.current) {
+              const w = node.style?.width || node.data?.size || 240
+              rfInstanceRef.current.fitBounds(
+                { x: node.position.x, y: node.position.y, width: w, height: 150 },
+                { padding: 0.5, duration: 500 }
+              )
+            }
+          }}
+          onClose={() => setShowSearch(false)}
         />
       )}
 
