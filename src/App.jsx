@@ -156,18 +156,22 @@ export default function App() {
     setSelectedNodeIds(newIds)
   }, [])
 
-  // Global keyboard shortcuts
+  // Global keyboard shortcuts (unified)
   useEffect(() => {
     const handleKey = (e) => {
       const mod = e.ctrlKey || e.metaKey
+      const el = document.activeElement
+      const tag = el?.tagName
+      const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || el?.contentEditable === 'true'
+
+      // Ctrl+K always works
       if (mod && e.key === 'k') {
         e.preventDefault()
         setShowSearch(s => !s)
         return
       }
-      // Clipboard shortcuts
-      const tag = e.target.tagName
-      const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable
+
+      // Ctrl/Cmd shortcuts (skip when typing)
       if (mod && !isTyping) {
         if (e.key === 'z') {
           e.preventDefault()
@@ -179,14 +183,15 @@ export default function App() {
         if (e.key === 'x') { e.preventDefault(); handleCutNodes(); return }
         if (e.key === 'v') { e.preventDefault(); handlePasteNodes(); return }
       }
-      // Mode shortcuts
-      if (mod || e.altKey) return
-      if (isTyping) return
-      if (e.key === 'h') setMode('hand')
-      if (e.key === 'v') setMode('cursor')
+
+      // H/V mode shortcuts (no modifier, not typing)
+      if (!mod && !e.altKey && !isTyping) {
+        if (e.key === 'h' || e.key === 'H') { setMode('hand'); return }
+        if (e.key === 'v' || e.key === 'V') { setMode('cursor'); return }
+      }
     }
-    window.addEventListener('keydown', handleKey, true)
-    return () => window.removeEventListener('keydown', handleKey, true)
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
   }, [handleCopyNodes, handleCutNodes, handlePasteNodes])
 
   // Load project data when activeId changes
