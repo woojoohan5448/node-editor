@@ -345,8 +345,7 @@ function CustomNode({ data, selected }) {
         background: data.bgColor || '#ffffff',
         borderRadius: 12,
         padding: '16px 20px',
-        height: '100%',
-        overflow: 'hidden',
+        minHeight: 50,
         wordBreak: 'break-word',
         overflowWrap: 'break-word',
         boxShadow: selected

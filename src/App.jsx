@@ -381,7 +381,7 @@ export default function App() {
     const g = new dagre.graphlib.Graph()
     g.setDefaultEdgeLabel(() => ({}))
     g.setGraph({ rankdir: 'TB', nodesep: 300, ranksep: 200 })
-    nodes.forEach(n => g.setNode(n.id, { width: n.data?.size || 240, height: 150 }))
+    nodes.forEach(n => g.setNode(n.id, { width: n.data?.size || 240, height: 300 }))
     edges.forEach(e => g.setEdge(e.source, e.target))
     dagre.layout(g)
     setNodes(nds => nds.map(n => {
