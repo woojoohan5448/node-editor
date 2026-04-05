@@ -192,7 +192,7 @@ function RenderBlock({ block, index, numIndex }) {
         <img
           src={block.props.url}
           alt={block.props.caption || ''}
-          style={{ width: '100%', height: 'auto', maxHeight: 300, objectFit: 'contain', borderRadius: 6, display: 'block' }}
+          style={{ width: '100%', maxWidth: '100%', height: 'auto', objectFit: 'contain', borderRadius: 6, display: 'block' }}
           onError={(e) => { e.target.style.display = 'none' }}
         />
       </div>
@@ -346,6 +346,7 @@ function CustomNode({ data, selected }) {
         borderRadius: 12,
         padding: '16px 20px',
         height: '100%',
+        overflow: 'hidden',
         wordBreak: 'break-word',
         overflowWrap: 'break-word',
         boxShadow: selected
