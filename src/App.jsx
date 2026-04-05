@@ -15,6 +15,7 @@ import PublishModal from './components/PublishModal'
 import Toolbar from './components/Toolbar'
 import ZoomControls from './components/ZoomControls'
 import ProjectSelector from './components/ProjectSelector'
+import SettingsModal from './components/SettingsModal'
 import {
   getProjects,
   getActiveProjectId,
@@ -57,6 +58,7 @@ export default function App() {
   const [mode, setMode] = useState('cursor')
   const [editNode, setEditNode] = useState(null)
   const [showPublish, setShowPublish] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
 
   // Load project data when activeId changes
   useEffect(() => {
@@ -85,6 +87,11 @@ export default function App() {
     onDelete: () => {
       setNodes(nds => nds.filter(n => n.id !== id))
       setEdges(eds => eds.filter(e => e.source !== id && e.target !== id))
+    },
+    onResize: (size) => {
+      setNodes(nds => nds.map(n =>
+        n.id === id ? { ...n, data: { ...n.data, size } } : n
+      ))
     },
   }), [])
 
@@ -157,6 +164,13 @@ export default function App() {
     <div style={{ width: '100vw', height: '100vh' }}>
       {/* Header */}
       <div style={headerStyle}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button style={settingsBtn} onClick={() => setShowSettings(true)} title="설정">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+          </svg>
+        </button>
         <ProjectSelector
           projects={projects}
           activeId={activeId}
@@ -165,6 +179,7 @@ export default function App() {
           onRename={handleRenameProject}
           onDelete={handleDeleteProject}
         />
+        </div>
         <button style={publishBtn} onClick={() => setShowPublish(true)}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
@@ -218,6 +233,16 @@ export default function App() {
         />
       )}
 
+      {/* Settings Modal */}
+      {showSettings && (
+        <SettingsModal
+          project={activeProject}
+          onRename={(id, name) => { handleRenameProject(id, name) }}
+          onDelete={(id) => { handleDeleteProject(id) }}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
+
       <style>{`
         .node-action-btn {
           display: flex; align-items: center; justify-content: center;
@@ -243,6 +268,13 @@ const headerStyle = {
   position: 'fixed', top: 0, left: 0, right: 0, height: 52,
   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
   padding: '0 16px', background: '#fff', borderBottom: '1px solid #e5e7eb', zIndex: 100,
+}
+
+const settingsBtn = {
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  width: 36, height: 36, border: '1px solid #e5e7eb', borderRadius: 8,
+  background: '#fff', color: '#6b7280', cursor: 'pointer',
+  transition: 'all 0.15s',
 }
 
 const publishBtn = {

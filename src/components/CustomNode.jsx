@@ -9,21 +9,29 @@ const handleStyle = {
   border: '2px solid #fff',
 }
 
+const SIZE_OPTIONS = [
+  { label: 'S', width: 160 },
+  { label: 'M', width: 240 },
+  { label: 'L', width: 320 },
+  { label: 'XL', width: 420 },
+]
+
 function CustomNode({ data, selected }) {
+  const currentWidth = data.size || 240
+
   return (
     <div
       style={{
         background: '#ffffff',
         borderRadius: 12,
         padding: '16px 20px',
-        minWidth: 200,
-        maxWidth: 280,
+        width: currentWidth,
         boxShadow: selected
           ? '0 0 0 2px #3b82f6, 0 4px 12px rgba(0,0,0,0.1)'
           : '0 1px 8px rgba(0,0,0,0.08)',
         border: selected ? '1px solid #3b82f6' : '1px solid #e5e7eb',
         position: 'relative',
-        transition: 'box-shadow 0.15s, border-color 0.15s',
+        transition: 'box-shadow 0.15s, border-color 0.15s, width 0.2s ease',
       }}
     >
       <Handle type="target" position={Position.Top} style={{ ...handleStyle, top: -4 }} />
@@ -31,17 +39,28 @@ function CustomNode({ data, selected }) {
       <Handle type="target" position={Position.Left} id="left-target" style={{ ...handleStyle, left: -4 }} />
       <Handle type="source" position={Position.Right} id="right-source" style={{ ...handleStyle, right: -4 }} />
 
+      {/* Size Toolbar - shown above node when selected */}
       {selected && (
-        <div
-          style={{
-            position: 'absolute',
-            top: -12,
-            right: -8,
-            display: 'flex',
-            gap: 4,
-            zIndex: 10,
-          }}
-        >
+        <div style={sizeToolbar}>
+          {SIZE_OPTIONS.map(({ label, width }) => (
+            <button
+              key={label}
+              className="node-size-btn"
+              style={{
+                ...sizeBtn,
+                ...(currentWidth === width ? sizeBtnActive : {}),
+              }}
+              onClick={(e) => { e.stopPropagation(); data.onResize?.(width) }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Action Buttons - top right */}
+      {selected && (
+        <div style={actionBtns}>
           <button
             className="node-action-btn"
             onClick={(e) => { e.stopPropagation(); data.onEdit?.() }}
@@ -85,6 +104,51 @@ function CustomNode({ data, selected }) {
       </div>
     </div>
   )
+}
+
+const sizeToolbar = {
+  position: 'absolute',
+  top: -40,
+  left: '50%',
+  transform: 'translateX(-50%)',
+  display: 'flex',
+  gap: 2,
+  padding: 3,
+  background: '#fff',
+  border: '1px solid #e5e7eb',
+  borderRadius: 8,
+  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+  zIndex: 10,
+}
+
+const sizeBtn = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 30,
+  height: 26,
+  border: 'none',
+  borderRadius: 5,
+  background: 'transparent',
+  color: '#6b7280',
+  fontSize: 11,
+  fontWeight: 600,
+  cursor: 'pointer',
+  transition: 'all 0.15s',
+}
+
+const sizeBtnActive = {
+  background: '#3b82f6',
+  color: '#fff',
+}
+
+const actionBtns = {
+  position: 'absolute',
+  top: -12,
+  right: -8,
+  display: 'flex',
+  gap: 4,
+  zIndex: 10,
 }
 
 export default memo(CustomNode)
