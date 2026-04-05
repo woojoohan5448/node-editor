@@ -72,7 +72,7 @@ export default function EditModal({ node, onSave, onClose }) {
     }
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -94,7 +94,7 @@ export default function EditModal({ node, onSave, onClose }) {
     return data.candidates?.[0]?.content?.parts?.[0]?.text || ''
   }
 
-  const systemBase = '반드시 아래 형식으로만 답변해줘:\n1. ## 제목으로 시작\n2. 쉬운 설명 1-2문장\n3. \'쉽게 비유하자면,\' 으로 시작하는 비유 1문장\n4. **핵심 특징** 소제목\n5. - **굵은 키워드**: 설명 형태로 3-4개 불릿\n전문 용어는 괄호로 쉽게 풀어써줘.\n답변은 한국어로.\nHTML 태그는 절대 사용하지 마.'
+  const systemBase = '다음 형식으로 작성해줘:\n1. 개념을 2문장으로 설명\n2. "주요 특징" 제목 아래 bullet 3~4개로 핵심 내용\n3. 필요하면 "예시" 섹션 추가\n한국어로 작성, 간결하고 명확하게.\nHTML 태그는 절대 사용하지 마.'
 
   const handleAIRequest = async () => {
     if (aiMode === 'table') {

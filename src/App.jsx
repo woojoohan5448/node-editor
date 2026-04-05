@@ -244,6 +244,22 @@ export default function App() {
     [nodes, makeNodeData]
   )
 
+  const edgesWithHighlight = useMemo(() => {
+    if (selectedNodeIds.length === 0) return edges
+    return edges.map(e => {
+      const connected = selectedNodeIds.includes(e.source) || selectedNodeIds.includes(e.target)
+      return {
+        ...e,
+        style: {
+          ...e.style,
+          stroke: connected ? '#3b82f6' : '#cbd5e1',
+          strokeWidth: connected ? 2.5 : 1.5,
+          opacity: connected ? 1 : 0.3,
+        },
+      }
+    })
+  }, [edges, selectedNodeIds])
+
   const onNodesChange = useCallback(
     (changes) => setNodes(nds => applyNodeChanges(changes, nds)),
     []
@@ -444,7 +460,7 @@ export default function App() {
       {/* React Flow Canvas */}
       <ReactFlow
         nodes={nodesWithCallbacks}
-        edges={edges}
+        edges={edgesWithHighlight}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}

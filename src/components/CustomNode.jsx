@@ -426,7 +426,7 @@ function CustomNode({ data, selected }) {
         <ColorPalette current={data.bgColor || '#ffffff'} onChange={(c) => { data.onColorChange?.(c); setShowColors(false) }} />
       )}
 
-      <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 6, color: '#000000' }}>
+      <div style={{ fontWeight: 600, fontSize: 14, paddingBottom: 10, marginBottom: 10, borderBottom: '1px solid #e5e7eb', color: '#000000' }}>
         {data.title || '제목을 입력해주세요'}
       </div>
       {data.blocks ? (
