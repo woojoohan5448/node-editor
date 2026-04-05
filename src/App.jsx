@@ -113,14 +113,14 @@ export default function App() {
       id,
       type: 'custom',
       position: { x: 250 + Math.random() * 200, y: 200 + Math.random() * 200 },
-      data: { title: '', content: '' },
+      data: { title: '', blocks: undefined },
     }
     setNodes(nds => [...nds, newNode])
   }, [])
 
-  const handleEditSave = useCallback((nodeId, { title, content }) => {
+  const handleEditSave = useCallback((nodeId, { title, blocks }) => {
     setNodes(nds => nds.map(n =>
-      n.id === nodeId ? { ...n, data: { ...n.data, title, content } } : n
+      n.id === nodeId ? { ...n, data: { ...n.data, title, blocks } } : n
     ))
   }, [])
 

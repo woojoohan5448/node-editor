@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import { Handle, Position } from '@xyflow/react'
+import { blocksToPlainText } from '../utils/blockUtils'
 
 const handleStyle = {
   width: 8,
@@ -78,7 +79,9 @@ function CustomNode({ data, selected }) {
         {data.title || '제목을 입력해주세요'}
       </div>
       <div style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.5, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-        {data.content || '내용 없음'}
+        {data.blocks
+          ? (blocksToPlainText(data.blocks) || '내용 없음')
+          : (data.content || '내용 없음')}
       </div>
     </div>
   )
