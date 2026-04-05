@@ -79,6 +79,7 @@ export default function App() {
   const clipboardRef = useRef([])
   const selectedRef = useRef([])
   const lastClickPosRef = useRef(null)
+  const undoStack = useRef([])
   // Keep refs in sync for use in event handler
   useEffect(() => { clipboardRef.current = clipboard }, [clipboard])
   useEffect(() => { selectedRef.current = selectedNodeIds }, [selectedNodeIds])
@@ -97,6 +98,8 @@ export default function App() {
   const handleCutNodes = useCallback(() => {
     const sel = selectedRef.current
     if (sel.length === 0) return
+    undoStack.current.push({ nodes: [...nodes], edges: [...edges] })
+    if (undoStack.current.length > 20) undoStack.current.shift()
     setNodes(nds => {
       const copied = nds.filter(n => sel.includes(n.id)).map(n => JSON.parse(JSON.stringify(n)))
       setClipboard(copied)
@@ -110,6 +113,8 @@ export default function App() {
   const handlePasteNodes = useCallback(() => {
     const clip = clipboardRef.current
     if (clip.length === 0) return
+    undoStack.current.push({ nodes: [...nodes], edges: [...edges] })
+    if (undoStack.current.length > 20) undoStack.current.shift()
 
     // Calculate paste target position
     let targetX, targetY
@@ -164,6 +169,12 @@ export default function App() {
       const tag = e.target.tagName
       const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable
       if (mod && !isTyping) {
+        if (e.key === 'z') {
+          e.preventDefault()
+          const prev = undoStack.current.pop()
+          if (prev) { setNodes(prev.nodes); setEdges(prev.edges) }
+          return
+        }
         if (e.key === 'c') { e.preventDefault(); handleCopyNodes(); return }
         if (e.key === 'x') { e.preventDefault(); handleCutNodes(); return }
         if (e.key === 'v') { e.preventDefault(); handlePasteNodes(); return }
@@ -245,6 +256,11 @@ export default function App() {
     (params) => setEdges(eds => addEdge(params, eds)),
     []
   )
+
+  const onNodeDragStop = useCallback(() => {
+    undoStack.current.push({ nodes: [...nodes], edges: [...edges] })
+    if (undoStack.current.length > 20) undoStack.current.shift()
+  }, [nodes, edges])
 
   const handleAddNode = useCallback(() => {
     const id = nanoid(8)
@@ -433,6 +449,7 @@ export default function App() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onInit={(instance) => { rfInstanceRef.current = instance }}
+        onNodeDragStop={onNodeDragStop}
         onNodeDoubleClick={handleNodeDoubleClick}
         onEdgeClick={handleEdgeClick}
         onPaneClick={(e) => {
