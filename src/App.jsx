@@ -76,123 +76,118 @@ export default function App() {
   const [selectedEdge, setSelectedEdge] = useState(null) // { id, position: {x, y} }
   const [selectedNodeIds, setSelectedNodeIds] = useState([])
   const [clipboard, setClipboard] = useState([])
-  const clipboardRef = useRef([])
-  const selectedRef = useRef([])
   const lastClickPosRef = useRef(null)
   const undoStack = useRef([])
-  // Keep refs in sync for use in event handler
+
+  // Refs to access latest state in keydown handler without re-registering
+  const nodesRef = useRef(nodes)
+  const edgesRef = useRef(edges)
+  const clipboardRef = useRef([])
+  const selectedIdsRef = useRef([])
+  useEffect(() => { nodesRef.current = nodes }, [nodes])
+  useEffect(() => { edgesRef.current = edges }, [edges])
   useEffect(() => { clipboardRef.current = clipboard }, [clipboard])
-  useEffect(() => { selectedRef.current = selectedNodeIds }, [selectedNodeIds])
+  useEffect(() => { selectedIdsRef.current = selectedNodeIds }, [selectedNodeIds])
 
-  const handleCopyNodes = useCallback(() => {
-    const sel = selectedRef.current
-    if (sel.length === 0) return
-    setNodes(nds => {
-      const copied = nds.filter(n => sel.includes(n.id)).map(n => JSON.parse(JSON.stringify(n)))
-      setClipboard(copied)
-      clipboardRef.current = copied
-      return nds
-    })
-  }, [])
-
-  const handleCutNodes = useCallback(() => {
-    const sel = selectedRef.current
-    if (sel.length === 0) return
-    undoStack.current.push({ nodes: [...nodes], edges: [...edges] })
-    if (undoStack.current.length > 20) undoStack.current.shift()
-    setNodes(nds => {
-      const copied = nds.filter(n => sel.includes(n.id)).map(n => JSON.parse(JSON.stringify(n)))
-      setClipboard(copied)
-      clipboardRef.current = copied
-      return nds.filter(n => !sel.includes(n.id))
-    })
-    setEdges(eds => eds.filter(e => !selectedRef.current.includes(e.source) && !selectedRef.current.includes(e.target)))
-    setSelectedNodeIds([])
-  }, [])
-
-  const handlePasteNodes = useCallback(() => {
-    const clip = clipboardRef.current
-    if (clip.length === 0) return
-    undoStack.current.push({ nodes: [...nodes], edges: [...edges] })
-    if (undoStack.current.length > 20) undoStack.current.shift()
-
-    // Calculate paste target position
-    let targetX, targetY
-    if (lastClickPosRef.current) {
-      targetX = lastClickPosRef.current.x
-      targetY = lastClickPosRef.current.y
-      lastClickPosRef.current = null
-    } else if (rfInstanceRef.current) {
-      const vp = rfInstanceRef.current.getViewport()
-      targetX = (-vp.x + window.innerWidth / 2) / vp.zoom
-      targetY = (-vp.y + window.innerHeight / 2) / vp.zoom
-    } else {
-      targetX = clip[0].position.x + 40
-      targetY = clip[0].position.y + 40
-    }
-
-    // Calculate clip bounding box center
-    const minX = Math.min(...clip.map(n => n.position.x))
-    const minY = Math.min(...clip.map(n => n.position.y))
-    const maxX = Math.max(...clip.map(n => n.position.x + (n.style?.width || 240)))
-    const maxY = Math.max(...clip.map(n => n.position.y + 150))
-    const centerX = (minX + maxX) / 2
-    const centerY = (minY + maxY) / 2
-    const offsetX = targetX - centerX
-    const offsetY = targetY - centerY
-
-    const newIds = []
-    const newNodes = clip.map(n => {
-      const newId = nanoid(8)
-      newIds.push(newId)
-      return {
-        ...n,
-        id: newId,
-        position: { x: n.position.x + offsetX, y: n.position.y + offsetY },
-        selected: true,
-      }
-    })
-    setNodes(nds => [...nds.map(n => ({ ...n, selected: false })), ...newNodes])
-    setSelectedNodeIds(newIds)
-  }, [])
-
-  // Global keyboard shortcuts (unified)
+  // Single unified keydown handler
   useEffect(() => {
-    const handleKey = (e) => {
+    const handler = (e) => {
       const mod = e.ctrlKey || e.metaKey
       const el = document.activeElement
       const tag = el?.tagName
       const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || el?.contentEditable === 'true'
 
-      // Ctrl+K always works
-      if (mod && e.key === 'k') {
-        e.preventDefault()
-        setShowSearch(s => !s)
-        return
-      }
+      // Ctrl+K: search toggle (always)
+      if (mod && e.key === 'k') { e.preventDefault(); setShowSearch(s => !s); return }
 
-      // Ctrl/Cmd shortcuts (skip when typing)
-      if (mod && !isTyping) {
-        if (e.key === 'z') {
-          e.preventDefault()
-          const prev = undoStack.current.pop()
-          if (prev) { setNodes(prev.nodes); setEdges(prev.edges) }
-          return
-        }
-        if (e.key === 'c') { e.preventDefault(); handleCopyNodes(); return }
-        if (e.key === 'x') { e.preventDefault(); handleCutNodes(); return }
-        if (e.key === 'v') { e.preventDefault(); handlePasteNodes(); return }
-      }
-
-      // H/V mode shortcuts (no modifier, not typing)
+      // H/V mode (no modifier, not typing)
       if (!mod && !e.altKey && !isTyping) {
         if (e.key === 'h' || e.key === 'H') { setMode('hand'); return }
         if (e.key === 'v' || e.key === 'V') { setMode('cursor'); return }
       }
+
+      // Ctrl/Cmd shortcuts (not typing)
+      if (!mod || isTyping) return
+
+      // Ctrl+Z: undo
+      if (e.key === 'z') {
+        e.preventDefault()
+        const prev = undoStack.current.pop()
+        if (prev) { setNodes(prev.nodes); setEdges(prev.edges) }
+        return
+      }
+
+      // Ctrl+C: copy
+      if (e.key === 'c') {
+        e.preventDefault()
+        const sel = selectedIdsRef.current
+        if (sel.length === 0) return
+        const copied = nodesRef.current.filter(n => sel.includes(n.id)).map(n => JSON.parse(JSON.stringify(n)))
+        setClipboard(copied)
+        clipboardRef.current = copied
+        return
+      }
+
+      // Ctrl+X: cut
+      if (e.key === 'x') {
+        e.preventDefault()
+        const sel = selectedIdsRef.current
+        if (sel.length === 0) return
+        undoStack.current.push({ nodes: [...nodesRef.current], edges: [...edgesRef.current] })
+        if (undoStack.current.length > 20) undoStack.current.shift()
+        const copied = nodesRef.current.filter(n => sel.includes(n.id)).map(n => JSON.parse(JSON.stringify(n)))
+        setClipboard(copied)
+        clipboardRef.current = copied
+        setNodes(nds => nds.filter(n => !sel.includes(n.id)))
+        setEdges(eds => eds.filter(e => !sel.includes(e.source) && !sel.includes(e.target)))
+        setSelectedNodeIds([])
+        return
+      }
+
+      // Ctrl+V: paste
+      if (e.key === 'v') {
+        e.preventDefault()
+        const clip = clipboardRef.current
+        if (clip.length === 0) return
+        undoStack.current.push({ nodes: [...nodesRef.current], edges: [...edgesRef.current] })
+        if (undoStack.current.length > 20) undoStack.current.shift()
+
+        let targetX, targetY
+        if (lastClickPosRef.current) {
+          targetX = lastClickPosRef.current.x; targetY = lastClickPosRef.current.y
+          lastClickPosRef.current = null
+        } else if (rfInstanceRef.current) {
+          const vp = rfInstanceRef.current.getViewport()
+          targetX = (-vp.x + window.innerWidth / 2) / vp.zoom
+          targetY = (-vp.y + window.innerHeight / 2) / vp.zoom
+        } else {
+          targetX = clip[0].position.x + 40; targetY = clip[0].position.y + 40
+        }
+
+        const minX = Math.min(...clip.map(n => n.position.x))
+        const minY = Math.min(...clip.map(n => n.position.y))
+        const maxX = Math.max(...clip.map(n => n.position.x + (n.style?.width || 240)))
+        const maxY = Math.max(...clip.map(n => n.position.y + 150))
+        const offsetX = targetX - (minX + maxX) / 2
+        const offsetY = targetY - (minY + maxY) / 2
+
+        const newIds = []
+        const newNodes = clip.map(n => {
+          const id = nanoid(8)
+          newIds.push(id)
+          return { ...n, id, position: { x: n.position.x + offsetX, y: n.position.y + offsetY }, selected: true }
+        })
+        setNodes(nds => [...nds.map(n => ({ ...n, selected: false })), ...newNodes])
+        setSelectedNodeIds(newIds)
+        // Shift clipboard for next paste
+        setClipboard(clip.map(n => ({ ...n, position: { x: n.position.x + 40, y: n.position.y + 40 } })))
+        clipboardRef.current = clip.map(n => ({ ...n, position: { x: n.position.x + 40, y: n.position.y + 40 } }))
+        return
+      }
     }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [handleCopyNodes, handleCutNodes, handlePasteNodes])
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, []) // empty deps — uses refs for latest state
 
   // Load project data when activeId changes
   useEffect(() => {
@@ -499,7 +494,21 @@ export default function App() {
       </ReactFlow>
 
       {/* Bottom Toolbar */}
-      <Toolbar mode={mode} onModeChange={setMode} onAddNode={handleAddNode} selectedCount={selectedNodeIds.length} hasClipboard={clipboard.length > 0} onAlign={handleAlign} onCopy={handleCopyNodes} onCut={handleCutNodes} onPaste={handlePasteNodes} onDeleteSelected={() => {
+      <Toolbar mode={mode} onModeChange={setMode} onAddNode={handleAddNode} selectedCount={selectedNodeIds.length} hasClipboard={clipboard.length > 0} onAlign={handleAlign} onCopy={() => {
+        const sel = selectedNodeIds; if (sel.length === 0) return
+        const copied = nodes.filter(n => sel.includes(n.id)).map(n => JSON.parse(JSON.stringify(n)))
+        setClipboard(copied); clipboardRef.current = copied
+      }} onCut={() => {
+        const sel = selectedNodeIds; if (sel.length === 0) return
+        undoStack.current.push({ nodes: [...nodes], edges: [...edges] })
+        const copied = nodes.filter(n => sel.includes(n.id)).map(n => JSON.parse(JSON.stringify(n)))
+        setClipboard(copied); clipboardRef.current = copied
+        setNodes(nds => nds.filter(n => !sel.includes(n.id)))
+        setEdges(eds => eds.filter(e => !sel.includes(e.source) && !sel.includes(e.target)))
+        setSelectedNodeIds([])
+      }} onPaste={() => {
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'v', ctrlKey: true, bubbles: true }))
+      }} onDeleteSelected={() => {
         if (selectedNodeIds.length === 0) return
         if (!window.confirm(`선택한 ${selectedNodeIds.length}개 노드를 삭제할까요?`)) return
         setNodes(nds => nds.filter(n => !selectedNodeIds.includes(n.id)))
