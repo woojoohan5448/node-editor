@@ -5,7 +5,7 @@ const TABS = [
   { id: 'project', label: '프로젝트 설정' },
 ]
 
-export default function SettingsModal({ project, onRename, onDelete, onClose }) {
+export default function SettingsModal({ project, onRename, onDelete, onResetEdges, onClose }) {
   const [tab, setTab] = useState('account')
   const [projectName, setProjectName] = useState(project?.name || '')
   const [userName] = useState(() => localStorage.getItem('lw_user_name') || '사용자')
@@ -107,6 +107,29 @@ export default function SettingsModal({ project, onRename, onDelete, onClose }) 
                     placeholder="프로젝트 이름"
                   />
                   <button style={saveBtn} onClick={handleSaveName}>저장</button>
+                </div>
+
+                <div style={resetSection}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
+                    엣지 스타일
+                  </div>
+                  <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 12 }}>
+                    모든 연결선을 기본 스타일(실선, 연한 회색)로 초기화합니다.
+                  </p>
+                  <button
+                    style={resetEdgeBtn}
+                    onClick={() => {
+                      if (window.confirm('모든 연결선 스타일을 초기화하시겠습니까?')) {
+                        onResetEdges?.()
+                      }
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="1 4 1 10 7 10" />
+                      <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
+                    </svg>
+                    엣지 스타일 초기화
+                  </button>
                 </div>
 
                 <div style={dangerZone}>
@@ -214,6 +237,18 @@ const logoutBtn = {
   marginTop: 28, padding: '10px 16px', borderRadius: 8,
   border: '1px solid #d1d5db', background: '#fff',
   fontSize: 14, color: '#374151', cursor: 'pointer',
+}
+
+const resetSection = {
+  marginTop: 24, padding: 16, borderRadius: 10,
+  border: '1px solid #e5e7eb', background: '#f9fafb',
+}
+
+const resetEdgeBtn = {
+  display: 'flex', alignItems: 'center', gap: 6,
+  padding: '10px 16px', borderRadius: 8, border: '1px solid #d1d5db',
+  background: '#fff', color: '#374151', fontSize: 14, fontWeight: 500,
+  cursor: 'pointer',
 }
 
 const dangerZone = {

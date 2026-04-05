@@ -6,8 +6,10 @@ import {
   applyEdgeChanges,
   Background,
   BackgroundVariant,
+  ConnectionMode,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
+import dagre from 'dagre'
 import { nanoid } from 'nanoid'
 import CustomNode from './components/CustomNode'
 import EditModal from './components/EditModal'
@@ -16,6 +18,7 @@ import Toolbar from './components/Toolbar'
 import ZoomControls from './components/ZoomControls'
 import ProjectSelector from './components/ProjectSelector'
 import SettingsModal from './components/SettingsModal'
+import EdgeToolbar from './components/EdgeToolbar'
 import {
   getProjects,
   getActiveProjectId,
@@ -25,17 +28,19 @@ import {
   deleteProject,
   getProject,
 } from './utils/storage'
+import { initialNodes, initialEdges } from './data/educationData'
 
 const defaultEdgeOptions = {
   animated: true,
-  style: { stroke: '#94a3b8', strokeWidth: 2 },
+  style: { stroke: '#94a3b8', strokeWidth: 1.5 },
 }
 
 export default function App() {
   const [projects, setProjects] = useState(() => {
     const p = getProjects()
     if (p.length === 0) {
-      createProject('내 첫 프로젝트')
+      const proj = createProject('AI 교육 자료')
+      updateProject(proj.id, { nodes: initialNodes, edges: initialEdges })
       return getProjects()
     }
     return p
@@ -59,13 +64,24 @@ export default function App() {
   const [editNode, setEditNode] = useState(null)
   const [showPublish, setShowPublish] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [selectedEdge, setSelectedEdge] = useState(null) // { id, position: {x, y} }
+  const [selectedNodeIds, setSelectedNodeIds] = useState([])
 
   // Load project data when activeId changes
   useEffect(() => {
     const proj = getProject(activeId)
     if (proj) {
-      setNodes(proj.nodes || [])
-      setEdges(proj.edges || [])
+      setNodes((proj.nodes || []).map(n => ({
+        ...n, data: { ...n.data, bgColor: '#ffffff' }
+      })))
+      setEdges((proj.edges || []).map(e => {
+        const { strokeDasharray, ...restStyle } = e.style || {}
+        return {
+          ...e,
+          animated: true,
+          style: { ...restStyle, stroke: restStyle.stroke || '#94a3b8', strokeWidth: restStyle.strokeWidth || 1.5 },
+        }
+      }))
     }
   }, [activeId])
 
@@ -88,9 +104,14 @@ export default function App() {
       setNodes(nds => nds.filter(n => n.id !== id))
       setEdges(eds => eds.filter(e => e.source !== id && e.target !== id))
     },
-    onResize: (size) => {
+    onColorChange: (bgColor) => {
       setNodes(nds => nds.map(n =>
-        n.id === id ? { ...n, data: { ...n.data, size } } : n
+        n.id === id ? { ...n, data: { ...n.data, bgColor } } : n
+      ))
+    },
+    onResize: (width) => {
+      setNodes(nds => nds.map(n =>
+        n.id === id ? { ...n, style: { ...n.style, width }, data: { ...n.data, size: width } } : n
       ))
     },
   }), [])
@@ -133,6 +154,91 @@ export default function App() {
 
   const handleNodeDoubleClick = useCallback((_, node) => {
     setEditNode(node.id)
+  }, [])
+
+  const onSelectionChange = useCallback(({ nodes: selectedNodes }) => {
+    setSelectedNodeIds((selectedNodes || []).map(n => n.id))
+  }, [])
+
+  const handleAlign = useCallback((type) => {
+    if (selectedNodeIds.length < 2) return
+    setNodes(nds => {
+      const selected = nds.filter(n => selectedNodeIds.includes(n.id))
+      if (selected.length < 2) return nds
+
+      let targetValue
+      switch (type) {
+        case 'left':
+          targetValue = Math.min(...selected.map(n => n.position.x))
+          return nds.map(n => selectedNodeIds.includes(n.id) ? { ...n, position: { ...n.position, x: targetValue } } : n)
+        case 'right':
+          targetValue = Math.max(...selected.map(n => n.position.x + (n.data?.size || 240)))
+          return nds.map(n => selectedNodeIds.includes(n.id) ? { ...n, position: { ...n.position, x: targetValue - (n.data?.size || 240) } } : n)
+        case 'center-h':
+          targetValue = selected.reduce((sum, n) => sum + n.position.x, 0) / selected.length
+          return nds.map(n => selectedNodeIds.includes(n.id) ? { ...n, position: { ...n.position, x: targetValue } } : n)
+        case 'top':
+          targetValue = Math.min(...selected.map(n => n.position.y))
+          return nds.map(n => selectedNodeIds.includes(n.id) ? { ...n, position: { ...n.position, y: targetValue } } : n)
+        case 'bottom':
+          targetValue = Math.max(...selected.map(n => n.position.y))
+          return nds.map(n => selectedNodeIds.includes(n.id) ? { ...n, position: { ...n.position, y: targetValue } } : n)
+        case 'center-v':
+          targetValue = selected.reduce((sum, n) => sum + n.position.y, 0) / selected.length
+          return nds.map(n => selectedNodeIds.includes(n.id) ? { ...n, position: { ...n.position, y: targetValue } } : n)
+        case 'distribute-h': {
+          if (selected.length < 3) return nds
+          const sortedX = [...selected].sort((a, b) => a.position.x - b.position.x)
+          const minX = sortedX[0].position.x
+          const maxX = sortedX[sortedX.length - 1].position.x
+          const step = (maxX - minX) / (sortedX.length - 1)
+          const posMap = {}
+          sortedX.forEach((n, i) => { posMap[n.id] = minX + step * i })
+          return nds.map(n => posMap[n.id] != null ? { ...n, position: { ...n.position, x: posMap[n.id] } } : n)
+        }
+        case 'distribute-v': {
+          if (selected.length < 3) return nds
+          const sortedY = [...selected].sort((a, b) => a.position.y - b.position.y)
+          const minY = sortedY[0].position.y
+          const maxY = sortedY[sortedY.length - 1].position.y
+          const stepY = (maxY - minY) / (sortedY.length - 1)
+          const posMapY = {}
+          sortedY.forEach((n, i) => { posMapY[n.id] = minY + stepY * i })
+          return nds.map(n => posMapY[n.id] != null ? { ...n, position: { ...n.position, y: posMapY[n.id] } } : n)
+        }
+        default:
+          return nds
+      }
+    })
+  }, [selectedNodeIds])
+
+  const handleAutoLayout = useCallback(() => {
+    const g = new dagre.graphlib.Graph()
+    g.setDefaultEdgeLabel(() => ({}))
+    g.setGraph({ rankdir: 'TB', nodesep: 300, ranksep: 200 })
+    nodes.forEach(n => g.setNode(n.id, { width: n.data?.size || 240, height: 150 }))
+    edges.forEach(e => g.setEdge(e.source, e.target))
+    dagre.layout(g)
+    setNodes(nds => nds.map(n => {
+      const pos = g.node(n.id)
+      if (!pos) return n
+      return { ...n, position: { x: pos.x - (n.data?.size || 240) / 2, y: pos.y - 75 } }
+    }))
+  }, [nodes, edges])
+
+  const handleEdgeClick = useCallback((event, edge) => {
+    setSelectedEdge({ id: edge.id, position: { x: event.clientX, y: event.clientY } })
+  }, [])
+
+  const handleEdgeStyleChange = useCallback((edgeId, newStyle) => {
+    setEdges(eds => eds.map(e =>
+      e.id === edgeId ? { ...e, style: newStyle } : e
+    ))
+  }, [])
+
+  const handleEdgeDelete = useCallback((edgeId) => {
+    setEdges(eds => eds.filter(e => e.id !== edgeId))
+    setSelectedEdge(null)
   }, [])
 
   const handleCreateProject = () => {
@@ -198,22 +304,34 @@ export default function App() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeDoubleClick={handleNodeDoubleClick}
+        onEdgeClick={handleEdgeClick}
+        onPaneClick={() => { setSelectedEdge(null); setSelectedNodeIds([]) }}
+        onSelectionChange={onSelectionChange}
+        selectionKeyCode="Shift"
+        multiSelectionKeyCode="Shift"
         nodeTypes={nodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         fitView
         panOnDrag={mode === 'hand'}
         selectionOnDrag={mode === 'cursor'}
         panOnScroll={mode === 'hand'}
+        connectionMode={ConnectionMode.Loose}
         proOptions={{ hideAttribution: true }}
         deleteKeyCode="Delete"
         style={{ background: '#ffffff' }}
       >
         <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#e5e7eb" />
-        <ZoomControls />
+        <ZoomControls onAutoLayout={handleAutoLayout} />
       </ReactFlow>
 
       {/* Bottom Toolbar */}
-      <Toolbar mode={mode} onModeChange={setMode} onAddNode={handleAddNode} />
+      <Toolbar mode={mode} onModeChange={setMode} onAddNode={handleAddNode} selectedCount={selectedNodeIds.length} onAlign={handleAlign} onDeleteSelected={() => {
+        if (selectedNodeIds.length === 0) return
+        if (!window.confirm(`선택한 ${selectedNodeIds.length}개 노드를 삭제할까요?`)) return
+        setNodes(nds => nds.filter(n => !selectedNodeIds.includes(n.id)))
+        setEdges(eds => eds.filter(e => !selectedNodeIds.includes(e.source) && !selectedNodeIds.includes(e.target)))
+        setSelectedNodeIds([])
+      }} />
 
       {/* Edit Modal */}
       {editingNode && (
@@ -233,12 +351,30 @@ export default function App() {
         />
       )}
 
+      {/* Edge Toolbar */}
+      {selectedEdge && edges.find(e => e.id === selectedEdge.id) && (
+        <EdgeToolbar
+          edge={edges.find(e => e.id === selectedEdge.id)}
+          position={selectedEdge.position}
+          onChange={handleEdgeStyleChange}
+          onDelete={handleEdgeDelete}
+          onClose={() => setSelectedEdge(null)}
+        />
+      )}
+
       {/* Settings Modal */}
       {showSettings && (
         <SettingsModal
           project={activeProject}
           onRename={(id, name) => { handleRenameProject(id, name) }}
           onDelete={(id) => { handleDeleteProject(id) }}
+          onResetEdges={() => {
+            setEdges(eds => eds.map(e => ({
+              ...e,
+              animated: true,
+              style: { stroke: '#94a3b8', strokeWidth: 1.5 },
+            })))
+          }}
           onClose={() => setShowSettings(false)}
         />
       )}
@@ -252,11 +388,20 @@ export default function App() {
           box-shadow: 0 1px 4px rgba(0,0,0,0.08);
           transition: all 0.15s;
         }
+        .node-link:hover { text-decoration: underline !important; }
         .node-action-btn:hover { background: #f3f4f6; color: #1a1a1a; }
         .node-action-btn-delete:hover { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
-        .react-flow__handle { opacity: 0; transition: opacity 0.15s; }
-        .react-flow__node:hover .react-flow__handle { opacity: 1; }
+        .react-flow__handle { opacity: 0; transition: opacity 0.2s; cursor: crosshair; }
+        .react-flow__node:hover .react-flow__handle,
+        .react-flow__node.selected .react-flow__handle { opacity: 1; }
+        .react-flow__handle:hover { transform: scale(1.3); }
         .react-flow__edge:hover { cursor: pointer; }
+        .react-flow__edge path[stroke-dasharray] {
+          animation: dashFlow 0.5s linear infinite;
+        }
+        @keyframes dashFlow {
+          to { stroke-dashoffset: -20; }
+        }
       `}</style>
     </div>
   )

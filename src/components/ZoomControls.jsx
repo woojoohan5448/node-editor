@@ -1,7 +1,19 @@
+import { useEffect } from 'react'
 import { useReactFlow } from '@xyflow/react'
 
-export default function ZoomControls() {
+export default function ZoomControls({ onAutoLayout }) {
   const { zoomIn, zoomOut, fitView } = useReactFlow()
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'F') {
+        e.preventDefault()
+        fitView({ padding: 0.2 })
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [fitView])
 
   return (
     <div style={container}>
@@ -15,11 +27,18 @@ export default function ZoomControls() {
           <line x1="5" y1="12" x2="19" y2="12" />
         </svg>
       </button>
-      <button style={btn} onClick={() => fitView({ padding: 0.2 })} title="전체 보기">
+      <button style={btn} onClick={() => fitView({ padding: 0.2 })} title="전체 보기 (Ctrl+Shift+F)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
         </svg>
       </button>
+      {onAutoLayout && (
+        <button style={btn} onClick={onAutoLayout} title="자동 정렬">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+        </button>
+      )}
     </div>
   )
 }
