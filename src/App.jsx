@@ -37,6 +37,12 @@ const defaultEdgeOptions = {
 
 export default function App() {
   const [projects, setProjects] = useState(() => {
+    // ?reset 쿼리 파라미터로 초기화 지원
+    if (window.location.search.includes('reset')) {
+      localStorage.removeItem('linkwisdom_projects')
+      localStorage.removeItem('linkwisdom_active_project')
+      window.history.replaceState({}, '', window.location.pathname)
+    }
     const p = getProjects()
     if (p.length === 0) {
       const proj = createProject('AI 교육 자료')
