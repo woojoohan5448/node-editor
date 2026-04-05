@@ -75,25 +75,85 @@ export default function App() {
   const [showSearch, setShowSearch] = useState(false)
   const [selectedEdge, setSelectedEdge] = useState(null) // { id, position: {x, y} }
   const [selectedNodeIds, setSelectedNodeIds] = useState([])
+  const [clipboard, setClipboard] = useState([])
+  const clipboardRef = useRef([])
+  const selectedRef = useRef([])
+  // Keep refs in sync for use in event handler
+  useEffect(() => { clipboardRef.current = clipboard }, [clipboard])
+  useEffect(() => { selectedRef.current = selectedNodeIds }, [selectedNodeIds])
+
+  const handleCopyNodes = useCallback(() => {
+    const sel = selectedRef.current
+    if (sel.length === 0) return
+    setNodes(nds => {
+      const copied = nds.filter(n => sel.includes(n.id)).map(n => JSON.parse(JSON.stringify(n)))
+      setClipboard(copied)
+      clipboardRef.current = copied
+      return nds
+    })
+  }, [])
+
+  const handleCutNodes = useCallback(() => {
+    const sel = selectedRef.current
+    if (sel.length === 0) return
+    setNodes(nds => {
+      const copied = nds.filter(n => sel.includes(n.id)).map(n => JSON.parse(JSON.stringify(n)))
+      setClipboard(copied)
+      clipboardRef.current = copied
+      return nds.filter(n => !sel.includes(n.id))
+    })
+    setEdges(eds => eds.filter(e => !selectedRef.current.includes(e.source) && !selectedRef.current.includes(e.target)))
+    setSelectedNodeIds([])
+  }, [])
+
+  const handlePasteNodes = useCallback(() => {
+    const clip = clipboardRef.current
+    if (clip.length === 0) return
+    const newIds = []
+    const idMap = {}
+    const newNodes = clip.map(n => {
+      const newId = nanoid(8)
+      idMap[n.id] = newId
+      newIds.push(newId)
+      return {
+        ...n,
+        id: newId,
+        position: { x: n.position.x + 40, y: n.position.y + 40 },
+        selected: true,
+      }
+    })
+    setNodes(nds => [...nds.map(n => ({ ...n, selected: false })), ...newNodes])
+    setSelectedNodeIds(newIds)
+    // Update clipboard positions for next paste
+    setClipboard(clip.map(n => ({ ...n, position: { x: n.position.x + 40, y: n.position.y + 40 } })))
+  }, [])
 
   // Global keyboard shortcuts
   useEffect(() => {
     const handleKey = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      const mod = e.ctrlKey || e.metaKey
+      if (mod && e.key === 'k') {
         e.preventDefault()
         setShowSearch(s => !s)
         return
       }
-      // Skip if modifier keys held or typing in input/textarea
-      if (e.ctrlKey || e.metaKey || e.altKey) return
+      // Clipboard shortcuts
       const tag = e.target.tagName
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return
+      const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable
+      if (mod && !isTyping) {
+        if (e.key === 'c') { e.preventDefault(); handleCopyNodes(); return }
+        if (e.key === 'x') { e.preventDefault(); handleCutNodes(); return }
+        if (e.key === 'v') { e.preventDefault(); handlePasteNodes(); return }
+      }
+      // Mode shortcuts
+      if (mod || e.altKey) return
+      if (isTyping) return
       if (e.key === 'h') setMode('hand')
       if (e.key === 'v') setMode('cursor')
     }
     window.addEventListener('keydown', handleKey, true)
     return () => window.removeEventListener('keydown', handleKey, true)
-  }, [])
+  }, [handleCopyNodes, handleCutNodes, handlePasteNodes])
 
   // Load project data when activeId changes
   useEffect(() => {
@@ -359,7 +419,7 @@ export default function App() {
       </ReactFlow>
 
       {/* Bottom Toolbar */}
-      <Toolbar mode={mode} onModeChange={setMode} onAddNode={handleAddNode} selectedCount={selectedNodeIds.length} onAlign={handleAlign} onDeleteSelected={() => {
+      <Toolbar mode={mode} onModeChange={setMode} onAddNode={handleAddNode} selectedCount={selectedNodeIds.length} hasClipboard={clipboard.length > 0} onAlign={handleAlign} onCopy={handleCopyNodes} onCut={handleCutNodes} onPaste={handlePasteNodes} onDeleteSelected={() => {
         if (selectedNodeIds.length === 0) return
         if (!window.confirm(`선택한 ${selectedNodeIds.length}개 노드를 삭제할까요?`)) return
         setNodes(nds => nds.filter(n => !selectedNodeIds.includes(n.id)))
