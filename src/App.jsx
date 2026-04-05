@@ -32,8 +32,8 @@ import {
 import { initialNodes, initialEdges } from './data/snapshotData'
 
 const defaultEdgeOptions = {
-  animated: true,
-  style: { stroke: '#94a3b8', strokeWidth: 1.5 },
+  animated: false,
+  style: { stroke: '#94a3b8', strokeWidth: 2 },
 }
 
 export default function App() {
@@ -200,8 +200,8 @@ export default function App() {
         const { strokeDasharray, ...restStyle } = e.style || {}
         return {
           ...e,
-          animated: true,
-          style: { ...restStyle, stroke: restStyle.stroke || '#94a3b8', strokeWidth: restStyle.strokeWidth || 1.5 },
+          animated: false,
+          style: { stroke: '#94a3b8', strokeWidth: 2 },
         }
       }))
     }
@@ -252,9 +252,9 @@ export default function App() {
         ...e,
         style: {
           ...e.style,
-          stroke: connected ? '#3b82f6' : '#cbd5e1',
-          strokeWidth: connected ? 2.5 : 1.5,
-          opacity: connected ? 1 : 0.3,
+          stroke: connected ? '#3b82f6' : '#94a3b8',
+          strokeWidth: connected ? 3 : 2,
+          opacity: connected ? 1 : 0.4,
         },
       }
     })
@@ -559,8 +559,8 @@ export default function App() {
           onResetEdges={() => {
             setEdges(eds => eds.map(e => ({
               ...e,
-              animated: true,
-              style: { stroke: '#94a3b8', strokeWidth: 1.5 },
+              animated: false,
+              style: { stroke: '#94a3b8', strokeWidth: 2 },
             })))
           }}
           onClose={() => setShowSettings(false)}
