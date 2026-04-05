@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid'
+import { deflate, inflate } from 'pako'
 
 const STORAGE_KEY = 'linkwisdom_projects'
 const ACTIVE_KEY = 'linkwisdom_active_project'
@@ -62,15 +63,31 @@ export function getProject(id) {
 }
 
 export function encodeProjectData(nodes, edges) {
-  const data = JSON.stringify({ nodes, edges })
-  return btoa(encodeURIComponent(data))
+  try {
+    const json = JSON.stringify({ nodes, edges })
+    const compressed = deflate(json)
+    // Convert Uint8Array to base64 in chunks to avoid stack overflow
+    let binary = ''
+    const len = compressed.length
+    for (let i = 0; i < len; i += 8192) {
+      binary += String.fromCharCode(...compressed.subarray(i, i + 8192))
+    }
+    return btoa(binary)
+  } catch {
+    return btoa(encodeURIComponent(JSON.stringify({ nodes, edges })))
+  }
 }
 
 export function decodeProjectData(encoded) {
   try {
-    const data = JSON.parse(decodeURIComponent(atob(encoded)))
-    return data
+    const binary = atob(encoded)
+    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0))
+    return JSON.parse(inflate(bytes, { to: 'string' }))
   } catch {
-    return null
+    try {
+      return JSON.parse(decodeURIComponent(atob(encoded)))
+    } catch {
+      return null
+    }
   }
 }
