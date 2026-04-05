@@ -194,7 +194,7 @@ export default function App() {
     const proj = getProject(activeId)
     if (proj) {
       setNodes((proj.nodes || []).map(n => ({
-        ...n, data: { ...n.data, bgColor: '#ffffff' }
+        ...n, data: { ...n.data, bgColor: n.data?.bgColor || '#ffffff' }
       })))
       setEdges((proj.edges || []).map(e => {
         const { strokeDasharray, ...restStyle } = e.style || {}

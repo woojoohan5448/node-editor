@@ -342,7 +342,7 @@ function CustomNode({ data, selected }) {
   return (
     <div
       style={{
-        background: '#ffffff',
+        background: data.bgColor || '#ffffff',
         borderRadius: 12,
         padding: '16px 20px',
         height: '100%',
