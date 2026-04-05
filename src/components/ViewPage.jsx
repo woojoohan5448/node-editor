@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useMemo, useState, useEffect } from 'react'
 import {
   ReactFlow,
   Background,
@@ -13,8 +12,13 @@ import CustomNode from './CustomNode'
 const nodeTypes = { custom: CustomNode }
 
 export default function ViewPage() {
-  const { data } = useParams()
-  const decoded = useMemo(() => decodeProjectData(data), [data])
+  const [hash, setHash] = useState(window.location.hash.slice(1))
+  useEffect(() => {
+    const onHash = () => setHash(window.location.hash.slice(1))
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
+  const decoded = useMemo(() => hash ? decodeProjectData(hash) : null, [hash])
 
   if (!decoded) {
     return (

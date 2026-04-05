@@ -1010,7 +1010,8 @@ export const vibeCodingNodes = [
   {
     id: 'node-72',
     type: 'custom',
-    position: { x: 4000, y: -9850 },
+    position: { x: 2383, y: 1420 },
+    style: { width: 300 },
     data: {
       title: 'GUI',
       bgColor: '#f5f3ff',
@@ -1024,7 +1025,8 @@ export const vibeCodingNodes = [
   {
     id: 'node-73',
     type: 'custom',
-    position: { x: 3500, y: -9050 },
+    position: { x: 3435, y: 984 },
+    style: { width: 450 },
     data: {
       title: '프레임워크',
       bgColor: '#fefce8',
@@ -1044,7 +1046,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-74',
     type: 'custom',
-    position: { x: 3500, y: -7850 },
+    position: { x: 4915, y: 1050 },
     data: {
       title: '로그(Log)',
       bgColor: '#f0f9ff',
@@ -1064,7 +1066,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-75',
     type: 'custom',
-    position: { x: 3500, y: -5850 },
+    position: { x: 7615, y: 1050 },
     data: {
       title: '로컬 (Local) vs 프로덕션 (Production)',
       bgColor: '#f0fdfa',
@@ -1084,7 +1086,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-76',
     type: 'custom',
-    position: { x: 4000, y: 0 },
+    position: { x: 14635, y: 1400 },
     data: {
       title: '컴포넌트(Component)',
       bgColor: '#f8fafc',
@@ -1104,7 +1106,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-77',
     type: 'custom',
-    position: { x: 5000, y: 5200 },
+    position: { x: 18415, y: 2100 },
     data: {
       title: '브레이크 포인트(Breakpoint)',
       bgColor: '#eff6ff',
@@ -1124,7 +1126,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-78',
     type: 'custom',
-    position: { x: 4000, y: -1600 },
+    position: { x: 12475, y: 1400 },
     data: {
       title: '쿼리 (Query)',
       bgColor: '#f0fdf4',
@@ -1144,7 +1146,8 @@ export const vibeCodingNodes = [
   {
     id: 'node-79',
     type: 'custom',
-    position: { x: 3500, y: -8250 },
+    position: { x: 4415, y: 1050 },
+    style: { width: 200 },
     data: {
       title: '깃 (Git / Version Control)',
       bgColor: '#fff7ed',
@@ -1164,7 +1167,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-80',
     type: 'custom',
-    position: { x: 3500, y: -6250 },
+    position: { x: 7075, y: 1050 },
     data: {
       title: '매핑(Mapping)',
       bgColor: '#fdf2f8',
@@ -1184,7 +1187,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-81',
     type: 'custom',
-    position: { x: 2500, y: 12750 },
+    position: { x: 15715, y: 1400 },
     data: {
       title: '웹페이지 구성',
       bgColor: '#f5f3ff',
@@ -1194,7 +1197,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-82',
     type: 'custom',
-    position: { x: 2000, y: 13750 },
+    position: { x: 18415, y: 1050 },
     data: {
       title: 'GNB (Global Navigation Bar / 네비게이션)',
       bgColor: '#fefce8',
@@ -1215,7 +1218,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-84',
     type: 'custom',
-    position: { x: 2500, y: 14750 },
+    position: { x: 19225, y: 1400 },
     data: {
       title: 'LNB (Local Navigation Bar)',
       bgColor: '#f0f9ff',
@@ -1236,7 +1239,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-85',
     type: 'custom',
-    position: { x: 3000, y: 12350 },
+    position: { x: 14905, y: 1750 },
     data: {
       title: '히어로 섹션 (Hero Section)',
       bgColor: '#f0fdfa',
@@ -1256,7 +1259,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-86',
     type: 'custom',
-    position: { x: 3500, y: 12350 },
+    position: { x: 14905, y: 2100 },
     data: {
       title: 'CTA (Call To Action)',
       bgColor: '#f8fafc',
@@ -1276,7 +1279,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-87',
     type: 'custom',
-    position: { x: 3000, y: 11350 },
+    position: { x: 13555, y: 1750 },
     data: {
       title: '페이지 중단',
       bgColor: '#eff6ff',
@@ -1286,7 +1289,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-88',
     type: 'custom',
-    position: { x: 3500, y: 11950 },
+    position: { x: 14365, y: 2100 },
     data: {
       title: '피처 섹션(Feature Section)',
       bgColor: '#f0fdf4',
@@ -1303,7 +1306,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-89',
     type: 'custom',
-    position: { x: 3500, y: 11150 },
+    position: { x: 13285, y: 2100 },
     data: {
       title: '아코디언 (Accordion)',
       bgColor: '#fff7ed',
@@ -1323,7 +1326,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-90',
     type: 'custom',
-    position: { x: 3000, y: 13550 },
+    position: { x: 16525, y: 1750 },
     data: {
       title: '페이지 하단',
       bgColor: '#fdf2f8',
@@ -1333,7 +1336,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-91',
     type: 'custom',
-    position: { x: 3500, y: 13550 },
+    position: { x: 16525, y: 2100 },
     data: {
       title: '푸터(Footer)',
       bgColor: '#f5f3ff',
@@ -1353,7 +1356,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-92',
     type: 'custom',
-    position: { x: 3500, y: 11550 },
+    position: { x: 13825, y: 2100 },
     data: {
       title: '모달(Modal)',
       bgColor: '#fefce8',
@@ -1373,7 +1376,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-93',
     type: 'custom',
-    position: { x: 3000, y: 12950 },
+    position: { x: 15715, y: 1750 },
     data: {
       title: '화려한 효과',
       bgColor: '#f0f9ff',
@@ -1383,7 +1386,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-94',
     type: 'custom',
-    position: { x: 3500, y: 10750 },
+    position: { x: 12745, y: 2100 },
     data: {
       title: '토스트(Toast)',
       bgColor: '#f0fdfa',
@@ -1403,7 +1406,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-96',
     type: 'custom',
-    position: { x: 3500, y: 12750 },
+    position: { x: 15445, y: 2100 },
     data: {
       title: '캐러셀(Carousel)',
       bgColor: '#f8fafc',
@@ -1423,7 +1426,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-97',
     type: 'custom',
-    position: { x: 3500, y: 13150 },
+    position: { x: 15985, y: 2100 },
     data: {
       title: '패럴랙스(Parallax)',
       bgColor: '#eff6ff',
@@ -1443,7 +1446,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-98',
     type: 'custom',
-    position: { x: 3000, y: 14150 },
+    position: { x: 17335, y: 1750 },
     data: {
       title: '기타',
       bgColor: '#f0fdf4',
@@ -1453,7 +1456,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-99',
     type: 'custom',
-    position: { x: 3500, y: 13950 },
+    position: { x: 17065, y: 2100 },
     data: {
       title: '파비콘(Favicon)',
       bgColor: '#fff7ed',
@@ -1473,7 +1476,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-100',
     type: 'custom',
-    position: { x: 3500, y: -6650 },
+    position: { x: 6535, y: 1050 },
     data: {
       title: '루트(Root)',
       bgColor: '#fdf2f8',
@@ -1493,7 +1496,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-101',
     type: 'custom',
-    position: { x: 3500, y: 14350 },
+    position: { x: 17605, y: 2100 },
     data: {
       title: 'SEO (검색 엔진 최적화)',
       bgColor: '#f5f3ff',
@@ -1513,7 +1516,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-102',
     type: 'custom',
-    position: { x: 3500, y: -3850 },
+    position: { x: 10315, y: 1050 },
     data: {
       title: '도메인(Domain)',
       bgColor: '#fefce8',
@@ -1534,7 +1537,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-103',
     type: 'custom',
-    position: { x: 4500, y: 4800 },
+    position: { x: 17875, y: 1750 },
     data: {
       title: '호버(Hover)',
       bgColor: '#f0f9ff',
@@ -1554,7 +1557,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-104',
     type: 'custom',
-    position: { x: 4500, y: 5600 },
+    position: { x: 18955, y: 1750 },
     data: {
       title: '액티브 (Active) / 포커스 (Focus)',
       bgColor: '#f0fdfa',
@@ -1583,7 +1586,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-105',
     type: 'custom',
-    position: { x: 4000, y: -2000 },
+    position: { x: 11935, y: 1400 },
     data: {
       title: '스토리지(Storage)',
       bgColor: '#f8fafc',
@@ -1603,7 +1606,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-107',
     type: 'custom',
-    position: { x: 3500, y: -2650 },
+    position: { x: 11395, y: 1050 },
     data: {
       title: '대시보드(Dashboard)',
       bgColor: '#eff6ff',
@@ -1623,7 +1626,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-108',
     type: 'custom',
-    position: { x: 3000, y: 6400 },
+    position: { x: 15185, y: 700 },
     data: {
       title: '디자인',
       bgColor: '#f0fdf4',
@@ -1633,7 +1636,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-109',
     type: 'custom',
-    position: { x: 3500, y: 6400 },
+    position: { x: 15185, y: 1050 },
     data: {
       title: 'Shadcn/UI (샤드씨엔)',
       bgColor: '#fff7ed',
@@ -1656,7 +1659,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-110',
     type: 'custom',
-    position: { x: 4000, y: -3850 },
+    position: { x: 10335, y: 1400 },
     data: {
       title: 'DNS(Domain Name System)',
       bgColor: '#fdf2f8',
@@ -1676,7 +1679,7 @@ export const vibeCodingNodes = [
   {
     id: 'node-111',
     type: 'custom',
-    position: { x: 4500, y: -3850 },
+    position: { x: 10315, y: 1750 },
     data: {
       title: 'IP 주소(IP Address)',
       bgColor: '#f5f3ff',

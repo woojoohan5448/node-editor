@@ -10,7 +10,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/view/:data" element={<ViewPage />} />
+        <Route path="/view" element={<ViewPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

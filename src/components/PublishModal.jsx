@@ -4,7 +4,7 @@ import { encodeProjectData } from '../utils/storage'
 export default function PublishModal({ nodes, edges, onClose }) {
   const [copied, setCopied] = useState(false)
   const encoded = encodeProjectData(nodes, edges)
-  const url = `${window.location.origin}/view/${encoded}`
+  const url = `${window.location.origin}/view#${encoded}`
 
   useEffect(() => {
     const handleKey = (e) => { if (e.key === 'Escape') onClose() }

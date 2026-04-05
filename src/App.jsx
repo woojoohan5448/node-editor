@@ -76,13 +76,19 @@ export default function App() {
   const [selectedEdge, setSelectedEdge] = useState(null) // { id, position: {x, y} }
   const [selectedNodeIds, setSelectedNodeIds] = useState([])
 
-  // Ctrl+K search shortcut
+  // Global keyboard shortcuts
   useEffect(() => {
     const handleKey = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault()
         setShowSearch(s => !s)
+        return
       }
+      // Skip if typing in input/textarea or modal open
+      const tag = e.target.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return
+      if (e.key === 'h' || e.key === 'H') setMode('hand')
+      if (e.key === 'v' || e.key === 'V') setMode('cursor')
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
@@ -397,9 +403,10 @@ export default function App() {
             const node = nodes.find(n => n.id === nodeId)
             if (node && rfInstanceRef.current) {
               const w = node.style?.width || node.data?.size || 240
-              rfInstanceRef.current.fitBounds(
-                { x: node.position.x, y: node.position.y, width: w, height: 150 },
-                { padding: 0.5, duration: 500 }
+              rfInstanceRef.current.setCenter(
+                node.position.x + w / 2,
+                node.position.y + 75,
+                { zoom: 1, duration: 600 }
               )
             }
           }}

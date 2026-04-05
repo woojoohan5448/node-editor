@@ -15,7 +15,7 @@ export default function Toolbar({ mode, onModeChange, onAddNode, selectedCount =
       <button
         style={{ ...btn, ...(mode === 'hand' ? activeBtn : {}) }}
         onClick={() => onModeChange('hand')}
-        title="핸드 모드"
+        title="핸드 모드 (H)"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M18 11V6a2 2 0 00-4 0v1M14 10V4a2 2 0 00-4 0v6M10 10.5V6a2 2 0 00-4 0v8" />
@@ -25,7 +25,7 @@ export default function Toolbar({ mode, onModeChange, onAddNode, selectedCount =
       <button
         style={{ ...btn, ...(mode === 'cursor' ? activeBtn : {}) }}
         onClick={() => onModeChange('cursor')}
-        title="커서 모드"
+        title="커서 모드 (V)"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
