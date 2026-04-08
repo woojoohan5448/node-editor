@@ -75,6 +75,7 @@ export default function App() {
   const [showSearch, setShowSearch] = useState(false)
   const [selectedEdge, setSelectedEdge] = useState(null) // { id, position: {x, y} }
   const [selectedNodeIds, setSelectedNodeIds] = useState([])
+  const [hydrated, setHydrated] = useState(false)
   const [clipboard, setClipboard] = useState([])
   const lastClickPosRef = useRef(null)
   const undoStack = useRef([])
@@ -189,6 +190,28 @@ export default function App() {
     return () => window.removeEventListener('keydown', handler)
   }, []) // empty deps — uses refs for latest state
 
+  // Server-first hydration: fetch /api/canvas/load on mount and override localStorage if present
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/canvas/load')
+      .then(r => r.ok ? r.json() : null)
+      .then(payload => {
+        if (cancelled) return
+        const serverProjects = payload?.data
+        if (Array.isArray(serverProjects) && serverProjects.length > 0) {
+          localStorage.setItem('linkwisdom_projects', JSON.stringify(serverProjects))
+          const storedActive = getActiveProjectId()
+          const nextActive = serverProjects.find(p => p.id === storedActive)?.id || serverProjects[0].id
+          setActiveProjectId(nextActive)
+          setProjects(serverProjects)
+          setActiveId(nextActive)
+        }
+      })
+      .catch(() => { /* server unavailable — fall back to localStorage */ })
+      .finally(() => { if (!cancelled) setHydrated(true) })
+    return () => { cancelled = true }
+  }, [])
+
   // Load project data when activeId changes
   useEffect(() => {
     const proj = getProject(activeId)
@@ -207,16 +230,21 @@ export default function App() {
     }
   }, [activeId])
 
-  // Auto-save to localStorage
+  // Auto-save to localStorage + server (debounced)
   useEffect(() => {
-    if (activeId) {
-      const timeout = setTimeout(() => {
-        updateProject(activeId, { nodes, edges })
-        setProjects(getProjects())
-      }, 300)
-      return () => clearTimeout(timeout)
-    }
-  }, [nodes, edges, activeId])
+    if (!activeId || !hydrated) return
+    const timeout = setTimeout(() => {
+      updateProject(activeId, { nodes, edges })
+      const latest = getProjects()
+      setProjects(latest)
+      fetch('/api/canvas/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(latest),
+      }).catch(() => { /* ignore server errors — localStorage still saved */ })
+    }, 300)
+    return () => clearTimeout(timeout)
+  }, [nodes, edges, activeId, hydrated])
 
   const makeNodeData = useCallback((id, data) => ({
     ...data,
