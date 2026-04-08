@@ -7,9 +7,9 @@ import {
   Background,
   BackgroundVariant,
   ConnectionMode,
+  MiniMap,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import dagre from 'dagre'
 import { nanoid } from 'nanoid'
 import CustomNode from './components/CustomNode'
 import EditModal from './components/EditModal'
@@ -76,6 +76,10 @@ export default function App() {
   const [selectedEdge, setSelectedEdge] = useState(null) // { id, position: {x, y} }
   const [selectedNodeIds, setSelectedNodeIds] = useState([])
   const [hydrated, setHydrated] = useState(false)
+  const isViewerMode = useMemo(() => {
+    const params = new URLSearchParams(window.location.search)
+    return params.has('view')
+  }, [])
   const [clipboard, setClipboard] = useState([])
   const lastClickPosRef = useRef(null)
   const undoStack = useRef([])
@@ -202,9 +206,21 @@ export default function App() {
           localStorage.setItem('linkwisdom_projects', JSON.stringify(serverProjects))
           const storedActive = getActiveProjectId()
           const nextActive = serverProjects.find(p => p.id === storedActive)?.id || serverProjects[0].id
+          const activeProj = serverProjects.find(p => p.id === nextActive)
           setActiveProjectId(nextActive)
           setProjects(serverProjects)
           setActiveId(nextActive)
+          // Explicitly sync nodes/edges from server — activeId useEffect won't re-fire if activeId is unchanged
+          if (activeProj) {
+            setNodes((activeProj.nodes || []).map(n => ({
+              ...n, data: { ...n.data, bgColor: n.data?.bgColor || '#ffffff' }
+            })))
+            setEdges((activeProj.edges || []).map(e => ({
+              ...e,
+              animated: false,
+              style: { stroke: '#94a3b8', strokeWidth: 2 },
+            })))
+          }
         }
       })
       .catch(() => { /* server unavailable — fall back to localStorage */ })
@@ -230,9 +246,9 @@ export default function App() {
     }
   }, [activeId])
 
-  // Auto-save to localStorage + server (debounced)
+  // Auto-save to localStorage + server (debounced) — disabled in viewer mode
   useEffect(() => {
-    if (!activeId || !hydrated) return
+    if (!activeId || !hydrated || isViewerMode) return
     const timeout = setTimeout(() => {
       updateProject(activeId, { nodes, edges })
       const latest = getProjects()
@@ -244,7 +260,7 @@ export default function App() {
       }).catch(() => { /* ignore server errors — localStorage still saved */ })
     }, 300)
     return () => clearTimeout(timeout)
-  }, [nodes, edges, activeId, hydrated])
+  }, [nodes, edges, activeId, hydrated, isViewerMode])
 
   const makeNodeData = useCallback((id, data) => ({
     ...data,
@@ -405,20 +421,6 @@ export default function App() {
     })
   }, [selectedNodeIds])
 
-  const handleAutoLayout = useCallback(() => {
-    const g = new dagre.graphlib.Graph()
-    g.setDefaultEdgeLabel(() => ({}))
-    g.setGraph({ rankdir: 'TB', nodesep: 300, ranksep: 200 })
-    nodes.forEach(n => g.setNode(n.id, { width: n.data?.size || 240, height: 300 }))
-    edges.forEach(e => g.setEdge(e.source, e.target))
-    dagre.layout(g)
-    setNodes(nds => nds.map(n => {
-      const pos = g.node(n.id)
-      if (!pos) return n
-      return { ...n, position: { x: pos.x - (n.data?.size || 240) / 2, y: pos.y - 75 } }
-    }))
-  }, [nodes, edges])
-
   const handleEdgeClick = useCallback((event, edge) => {
     setSelectedEdge({ id: edge.id, position: { x: event.clientX, y: event.clientY } })
   }, [])
@@ -484,6 +486,15 @@ export default function App() {
           onDelete={handleDeleteProject}
         />
         </div>
+        {isViewerMode && (
+          <div style={viewerBadge}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            읽기 전용
+          </div>
+        )}
         <button style={publishBtn} onClick={() => setShowPublish(true)}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
@@ -524,11 +535,36 @@ export default function App() {
         panOnScroll={mode === 'hand'}
         connectionMode={ConnectionMode.Loose}
         proOptions={{ hideAttribution: true }}
-        deleteKeyCode="Delete"
+        deleteKeyCode={isViewerMode ? null : "Delete"}
+        nodesDraggable={!isViewerMode}
+        nodesConnectable={!isViewerMode}
+        edgesFocusable={!isViewerMode}
         style={{ background: '#f1f5f9' }}
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="#cbd5e1" />
-        <ZoomControls onAutoLayout={handleAutoLayout} />
+        <ZoomControls />
+        <MiniMap
+          position="bottom-right"
+          pannable
+          zoomable
+          style={{
+            background: 'rgba(255, 255, 255, 0.6)',
+            border: '1px solid rgba(0, 0, 0, 0.08)',
+            borderRadius: 8,
+            width: 200,
+            height: 140,
+          }}
+          maskColor="rgba(241, 245, 249, 0.4)"
+          nodeColor={(n) => n.data?.bgColor && n.data.bgColor !== '#ffffff' ? n.data.bgColor : '#94a3b8'}
+          nodeStrokeColor="#64748b"
+          nodeStrokeWidth={1}
+          nodeBorderRadius={3}
+          onClick={(event, position) => {
+            if (rfInstanceRef.current) {
+              rfInstanceRef.current.setCenter(position.x, position.y, { zoom: 1, duration: 500 })
+            }
+          }}
+        />
       </ReactFlow>
 
       {/* Bottom Toolbar */}
@@ -660,6 +696,12 @@ const settingsBtn = {
   width: 36, height: 36, border: '1px solid #e5e7eb', borderRadius: 8,
   background: '#fff', color: '#6b7280', cursor: 'pointer',
   transition: 'all 0.15s',
+}
+
+const viewerBadge = {
+  display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px',
+  background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a',
+  borderRadius: 8, fontSize: 13, fontWeight: 500, marginRight: 8,
 }
 
 const publishBtn = {
